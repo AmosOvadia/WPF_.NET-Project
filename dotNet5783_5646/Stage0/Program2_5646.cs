@@ -8,9 +8,9 @@ namespace Stage0
 {
     partial class Program
     {
-        static partial void Welcome2_5646()
-        {
-            Console.WriteLine("I am also here");
-        }
+        //static partial void Welcome2_5646()
+        //{
+        //    Console.WriteLine("I am also here");
+        //}
     }
 }
