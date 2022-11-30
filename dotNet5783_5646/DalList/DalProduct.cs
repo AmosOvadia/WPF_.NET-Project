@@ -1,93 +1,82 @@
 ﻿using DO;
 using System;
 using static Dal.DataSource;
+using DalApi;
 
 namespace Dal;
 
-public class DalProduct
+internal class DalProduct : IProduct
 {
-    public DalProduct()
+    public int Add(Product prod)
     {
-        DataSource.s_Initialize();
-    }
-
-    public int addProduct(Prodcut prod)
-    {
-        foreach (Prodcut prodcut in DataSource.productArr)
+        foreach (Product prodcut in DataSource.productList)
         {
             if (prod.Id == prodcut.Id)
-                throw new Exception("The product already exists");
+                throw new TheIDAlreadyExistsInTheDatabase("The product already exists");
 
         }
-        DataSource.productArr[DataSource.Config.indexProduct++] = prod;
+        DataSource.productList.Add(prod);     
         return prod.Id;
     }
 
-
-    public void deleteProdoct(int ID)
+    public void Delete(int ID)
     {
+        bool check = false; 
+        foreach (Product productTemp in productList)
         {
-            int i;
-            for (i = 0; i < DataSource.Config.indexProduct; i++)
+            if (productTemp.Id == ID)
             {
-                if (productArr[i].Id == ID)
-                    break;
-            }
-            if (i == DataSource.Config.indexProduct)
-                throw new Exception("The product does not exist");
-            else
-            {
-                for (; i < DataSource.Config.indexProduct; i++)
-                {
-                    productArr[i].Id = productArr[i++].Id;
-                }
-                DataSource.Config.indexProduct--;
-            }
-        }
-    }
-
-
-    public void updateProduct(Prodcut product)
-    {
-        int i;
-        bool check = false;
-        for (i = 0; (i < DataSource.Config.indexProduct) && (!check); i++)
-        {
-            if (productArr[i].Id == product.Id)
-            {
-                productArr[i] = product;
                 check = true;
+                productList.Remove(productTemp); 
                 break;
             }
+        }   
+            if (!check)
+                throw new TheIdentityCardDoesNotExistInTheDatabase("The product does not exist");
+    }
+
+    public void Update(Product product)
+    {
+        int index = 0;
+        bool check = false;
+        foreach (Product productTemp in productList)
+        {
+
+            if (productTemp.Id == product.Id)
+            {
+                check = true;
+                productList[index] = product;
+                break;
+            }
+            index++;
         }
         if (!check)
         {
-            throw new Exception("The product does not exist");
+            throw new TheIdentityCardDoesNotExistInTheDatabase("The product does not exist");
         }
     }
 
-    public Prodcut getProdcut(int id)
+    public Product Get(int id)
     {
-        for (int i = 0; i < DataSource.Config.indexProduct; i++)
+        foreach (Product productTemp in productList)
         {
-            if (productArr[i].Id == id)
-                return productArr[i];
-        }
-        throw new Exception("The product does not exist");
+
+            if (productTemp.Id == id)
+            { 
+                return productTemp;
+            }
+        } 
+        throw new TheIdentityCardDoesNotExistInTheDatabase("The product does not exist");
     }
 
-    public static Prodcut[] getProductArray()
+    public  IEnumerable<Product> GetList()
     {
-        Prodcut[] arr = new Prodcut[50];
-        for (int i = 0; i < DataSource.Config.indexProduct; i++)
-        {
-            arr[i] = DataSource.productArr[i];
-        }
-        return arr;
+        
+        return productList;
     }
 
-    public int productLeangth()
+    public int Leangth()
     {
-        return DataSource.Config.indexProduct;
+        return productList.Capacity;
     }
 }

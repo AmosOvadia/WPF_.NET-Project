@@ -1,23 +1,27 @@
-﻿using System.ComponentModel;
-using static DO.Enums;
+﻿using static BO.Enums;
+namespace BO;
 
-namespace DO;
 
-public struct Product
+//The fields of the logical entity - product item
+public class ProductItem
 {
     public int Id { get; set; }
     public string Name { get; set; }
     public double Price { get; set; }
     public ProdactCategory Category { get; set; }
+    public int Amount { get; set; } 
     public int InStock { get; set; }
 
 
+    //to print the object
     public override string ToString() => $@"
-    Product Id - {Id} 
-    Name: {Name}, 
-    Category : {Category}
-    Price : {Price}
+    Id - {Id} 
+    Name: {Name}
+    Category: {Category}
+    Price: {Price}
+    Amount: {Amount}
     Amount in stock: {InStock}
     ";
+
 
 }

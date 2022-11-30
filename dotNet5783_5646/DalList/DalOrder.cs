@@ -1,81 +1,86 @@
-﻿using DO;
+﻿using DalApi;
+using DO;
 using Microsoft.VisualBasic.FileIO;
 using System.ComponentModel;
 using System.Diagnostics;
 namespace Dal;
+
 using static Dal.DataSource;
 
 
-public class DalOrder
+internal class DalOrder : IOrder
 {
-    public int addOrder(Order ord)
-    {
-        ord.Id = DataSource.Config.getIdOreder;
-        DataSource.orderArr[DataSource.Config.indexOrder++] = ord;
+    public int Add(Order ord)
+    {       
+        foreach (Order order in orderList)
+        {
+            if (order.Id == ord.Id)
+            {
+                throw new TheIDAlreadyExistsInTheDatabase("The order already exist");
+            }
+        }
+        orderList.Add(ord);
         return ord.Id;
     }
-
-    public void deleteOrder(int id)
+    public void Delete(int id)
     {
-        int i;
-        for (i = 0; i < DataSource.Config.indexOrder; i++)
+        bool check = false;
+        foreach (Order order in orderList)
         {
-            if (orderArr[i].Id == id)
-                break;
-        }
-        if (i == DataSource.Config.indexOrder)
-            throw new Exception("The order does not exist");
-        else
-        {
-            for (; i < DataSource.Config.indexOrder; i++)
+            if (order.Id == id)
             {
-                orderArr[i] = orderArr[i++];
+                check = true;
+                orderList.Remove(order);
             }
-            DataSource.Config.indexOrder--;
         }
+        if (!check)
+            throw new TheIdentityCardDoesNotExistInTheDatabase("The order does not exist");
+
     }
 
-    public void updateOrder(Order order)
+    public Order Get(int orderId)
     {
-        int i;
-        bool check = false;
-        for (i = 0; i < (DataSource.Config.indexOrder) && (!check); i++)
+        foreach (Order temp in orderList)
         {
-            if (orderArr[i].Id == order.Id)
+            if (temp.Id == orderId)
             {
-                orderArr[i] = order;
+                return temp;
+            }
+        }
+        throw new TheIdentityCardDoesNotExistInTheDatabase("The order does not exist");
+    }
+    public void Update(Order order)
+    {
+        bool check = false;
+        Order item = new Order();
+        foreach (Order temp in orderList)
+        {
+            if (temp.Id == order.Id)
+            {
                 check = true;
-                break;
+                item.Id = order.Id;
+                item.CostomerName = order.CostomerName;
+                item.CostomerAdress = order.CostomerAdress;
+                item.CostomerEmail = order.CostomerEmail;
+                item.OrderDate = order.OrderDate;   
+                if(order.ShipDate != null)
+                    item.ShipDate = order.ShipDate;
+                if (order.DeliveryDate != null)
+                    item.DeliveryDate = order.DeliveryDate;
             }
         }
         if (!check)
         {
-            throw new Exception("The order does not exist");
-        }
+            throw new TheIdentityCardDoesNotExistInTheDatabase("The order does not exist");
+        }     
     }
-    public Order getOrder(int orderId)
+   
+    public  IEnumerable<Order> GetList()
     {
-        for (int i = 0; i < DataSource.Config.indexOrder; i++)
-        {
-            if (orderArr[i].Id == orderId)
-                return orderArr[i];
-        }
-        throw new Exception("The order does not exist");
+        return orderList;
     }
-
-
-    public static Order[] getOrderArray()
+    public int Leangth()
     {
-        Order[] orderArrey = new Order[100];
-        for (int i = 0; i < DataSource.Config.indexOrder; i++)
-        {
-            orderArrey[i] = orderArr[i];
-        }
-        return orderArrey;
-    }
-  
-    public int orderLeangth()
-    {
-        return DataSource.Config.indexOrder;
+        return orderList.Capacity;
     }
 }

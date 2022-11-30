@@ -2,6 +2,9 @@
 using System.ComponentModel;
 using System;
 using static DO.Enums;
+using System.Transactions;
+using DalApi;
+using static Dal.DataSource;
 
 namespace Dal;
 
@@ -9,16 +12,17 @@ namespace Dal;
 
 internal static class DataSource
 {
-    
-    static DataSource() { //s_Initialize();
-                          }
+
+    static DataSource() { s_Initialize(); }
+                          
     static readonly Random random = new Random();
-    internal static Prodcut[] productArr = new Prodcut[50];
-    internal static Order[] orderArr = new Order[100];
-    internal static OrderItem[] orderItemArr = new OrderItem[200];
+    internal static List<Product> productList = new List<Product>();
+    internal static List<Order> orderList = new List<Order>();
+    internal static List<OrderItem> orderItemList = new List<OrderItem>();
 
-
-
+    //internal static Prodcut[] productArr = new Prodcut[50];
+    //internal static Order[] orderArr = new Order[100];
+    //internal static OrderItem[] orderItemArr = new OrderItem[200];
     private static void s_addOrder()
     {
         string[] costomerName = { "Clay Blankenship",
@@ -87,55 +91,49 @@ internal static class DataSource
 
         for (int i = 0; i < 20; i++)
         {
-            orderArr[i].Id = Config.getIdOreder;
-            Config.indexOrder++;
-            orderArr[i].CostomerName = costomerName[i];
-            orderArr[i].CostomerEmail = CostomerEmail[i];
-            orderArr[i].CostomerAdress = CostomerAdress[i];
-            DateTime time = DateTime.Now;  
-            orderArr[i].OrderDate = time.AddDays(-5).AddHours(6).AddMinutes(7);
+            Order temp = new Order();
+
+            temp.Id = Config.getIdOreder;
+            temp.CostomerName = costomerName[i];
+            temp.CostomerEmail = CostomerEmail[i];
+            temp.CostomerAdress = CostomerAdress[i];
+            DateTime time = DateTime.Now;
+            temp.OrderDate = time.AddDays(-5).AddHours(6).AddMinutes(7);
             if (i < 16)  // 80%
             {
-                orderArr[i].ShipDate = time.AddDays(-3).AddHours(4).AddMinutes(5);
+                temp.ShipDate = time.AddDays(-3).AddHours(4).AddMinutes(5);
             }
             else
-             orderArr[i].ShipDate = time.AddDays(-5).AddHours(6).AddMinutes(7);
+                temp.ShipDate = time.AddDays(-5).AddHours(6).AddMinutes(7);
             if (i <= 12) // 60%
             {
-                orderArr[i].DeliveryDate = time.AddDays(-1).AddHours(6).AddMinutes(7);
+                temp.DeliveryDate = time.AddDays(-1).AddHours(6).AddMinutes(7);
             }
-            else orderArr[i].DeliveryDate = null;
+            else temp.DeliveryDate = null;
+            orderList.Add(temp);    
         }
 
 
     }
-
-
-
-
     private static void s_addOrderItem()
     {
-        OrderItem orderItem = new OrderItem();
-        int k = 0;
-        for (int i = 0; i < 10; i++)
+        OrderItem temp = new OrderItem();
+        foreach (var item in orderList)      
         {
-            Prodcut productTemp = productArr[i]; 
-            for (int J = 0; J < 4; J++,k++)
+            int i = 0;
+            foreach (Product productTemp in productList)
             {
-                orderItemArr[k].Id = Config.getIdOrederItem;
-                orderItemArr[k].OrderId = Config.getIdOreder;
-                orderItemArr[k].ProductId = productTemp.Id;
-                orderItemArr[k].Price = productTemp.Price;
-                orderItemArr[k].Amount = random.Next(1, 5);
-                Config.indexOrderItem++;
+                i++;
+                temp.Id = Config.getIdOrederItem;
+                temp.OrderId = item.Id;
+                temp.ProductId = productTemp.Id;
+                temp.Price = productTemp.Price;
+                temp.Amount = random.Next(1, 5);
+                orderItemList.Add(temp);
+                if (i == 4) break;
             }
         }
     }
-
-
-
-
-
     private static void s_addProduct()
     {
         string[] name = { "Crocs", "Kennethcole", "Adidas", "Athletic", "Nike", "Puma", "Reebok", "Timberland", "Merrell", "Gucci" };
@@ -145,31 +143,41 @@ internal static class DataSource
         int k;
         for (; i < 4; i++)
         {
-            
-            productArr[i].Id =  Config.getIdProduct;
-            productArr[i].Name = name[i];
-            productArr[i].Price = prices[i];    
-            productArr[i].Category = ProdactCategory.Shirts;
-            productArr[i].InStock = random.Next(10, 50);
-            Config.indexProduct++;
+            Product temp = new Product();
+
+
+            temp.Id =  Config.getIdProduct;
+            temp.Name = name[i];
+            temp.Price = prices[i];
+            temp.Category = ProdactCategory.Shirts;
+            temp.InStock = random.Next(10, 50);
+      //      Config.indexProduct++;
+
+            productList.Add(temp);  
         }
         for ( j = i; j < 8; j++)
         {
-            productArr[j].Id = Config.getIdProduct;
-            productArr[j].Name = name[j];
-            productArr[j].Price = prices[j];
-            productArr[j].Category = ProdactCategory.Hats;
-            productArr[j].InStock = random.Next(10, 50);
-            Config.indexProduct++;
+            Product temp = new Product();
+            temp.Id = Config.getIdProduct;
+            temp.Name = name[i];
+            temp.Price = prices[i];
+            temp.Category = ProdactCategory.Hats;
+            temp.InStock = random.Next(10, 50);
+            //      Config.indexProduct++;
+
+            productList.Add(temp);
         }
         for ( k = j; k < 10; k++)
         {
-            productArr[k].Id = Config.getIdProduct;
-            productArr[k].Name = name[k];
-            productArr[k].Price = prices[k];
-            productArr[k].Category = ProdactCategory.Shoes;
-            productArr[k].InStock = random.Next(10, 50);
-            Config.indexProduct++;
+            Product temp = new Product();
+            temp.Id = Config.getIdProduct;
+            temp.Name = name[i];
+            temp.Price = prices[i];
+            temp.Category = ProdactCategory.Shoes;
+            temp.InStock = random.Next(10, 50);
+            //      Config.indexProduct++;
+
+            productList.Add(temp);
         }
     }
 
@@ -185,12 +193,6 @@ internal static class DataSource
     }
     internal static class Config
     {
-        internal static int indexOrder = 0;
-        internal static int indexOrderItem = 0;
-        internal static int indexProduct = 0;
-
-
-
         private static int idProduct = random.Next(100000, 999999);
         public static int getIdProduct
         {
