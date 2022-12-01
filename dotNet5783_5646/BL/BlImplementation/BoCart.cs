@@ -50,7 +50,7 @@ internal class BoCart : BlApi.ICart
         }
         //In case the member already exists
         foreach (var item in cart.Items)
-        {
+        {   
             if (item.Id == id)
             {
                 foreach (var product in Do_Products)
