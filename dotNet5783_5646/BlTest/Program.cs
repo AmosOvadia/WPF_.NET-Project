@@ -18,7 +18,8 @@ internal class Program
     //When the user selects the Cart option
     static void optionCart()
     {
-        Bl access = new Bl();
+        BlApi.IBl? access = BlApi.Factory.Get();
+        //BlImplementation.BL access1 = new BlImplementation.BL();
         int id = 0, Quantity = 0;
         char option = '1';
             Console.WriteLine(
@@ -32,7 +33,7 @@ internal class Program
                 case 'a':
                     Console.WriteLine("Enter the ID number of the product you want to add\n");
                     int.TryParse(Console.ReadLine(), out id);
-                    Console.WriteLine(access.BoCart.Add(cart, id));
+                    Console.WriteLine(access.Cart.Add(cart, id));
                     break;
 
 
@@ -40,12 +41,12 @@ internal class Program
                     Console.WriteLine("Enter the product ID number and the quantity the you want to change\n");
                     int.TryParse(Console.ReadLine(), out id);
                     int.TryParse(Console.ReadLine(), out Quantity);
-                    Console.WriteLine(access.BoCart.UpdateProductQuantity(cart, id, Quantity));
+                    Console.WriteLine(access.Cart.UpdateProductQuantity(cart, id, Quantity));
                     break;
 
 
                 case 'c':                    
-                    access.BoCart.MakeAnOrder(cart);
+                    access.Cart.MakeAnOrder(cart);
                     break;
                 
                 case '0':
@@ -63,7 +64,9 @@ internal class Program
     //When the user selects the Order option
     static void optionOrder()
     {
-        Bl access = new Bl();
+        BlApi.IBl? access = BlApi.Factory.Get();
+
+      //  BlImplementation.BL access = new BlImplementation.BL();
         BO.Order order = new BO.Order();
         Console.WriteLine("\nOrder\n" +
             "a in order to receive all orders\n" +
@@ -77,7 +80,7 @@ internal class Program
         {
             case 'a':
                 List<BO.OrderForList> boOrderForLists = new List<BO.OrderForList>();
-                boOrderForLists = (List<BO.OrderForList>)access.BoOrder.GetOrders();
+                boOrderForLists = (List<BO.OrderForList>)access.Order.GetOrders();
                 foreach (var boOrder in boOrderForLists)
                 {
                     Console.WriteLine(boOrder);
@@ -89,26 +92,26 @@ internal class Program
                 int id;
                 Console.WriteLine("Enter the ID number of the order you want to get\n");
                 int.TryParse(Console.ReadLine(), out id);
-                Console.WriteLine(access.BoOrder.GetOrder(id));
+                Console.WriteLine(access.Order.GetOrder(id));
                 break;
 
 
             case 'c':
                 Console.WriteLine("Enter the ID of the order for which you want to change the shipping time\n");
                 int.TryParse(Console.ReadLine(), out id);
-                Console.WriteLine(access.BoOrder.OrderShippingUpdate(id));
+                Console.WriteLine(access.Order.OrderShippingUpdate(id));
                 break;
 
             case 'd':
                 Console.WriteLine("Enter the ID of the order for which you want to change the delivery time\n");
                 int.TryParse(Console.ReadLine(), out id);
-                Console.WriteLine(access.BoOrder.OrderDeliveryUpdate(id));
+                Console.WriteLine(access.Order.OrderDeliveryUpdate(id));
                 break;
 
             case 'e':
                 Console.WriteLine("Enter the order number you want to track\n");
                 int.TryParse(Console.ReadLine(), out id);
-                Console.WriteLine(access.BoOrder.Order_tracking(id));
+                Console.WriteLine(access.Order.Order_tracking(id));
 
                 break;
 
@@ -120,7 +123,8 @@ internal class Program
     //When the user selects the Product option
     static void optionProduct()
     {
-        Bl access = new Bl();
+        BlApi.IBl? access = BlApi.Factory.Get();
+        // BlImplementation.BL access = new BlImplementation.BL();
         BO.Product product = new BO.Product();
         Console.WriteLine("\nProduct\n" +
     "a in order to view products catalog \n" +
@@ -136,7 +140,7 @@ internal class Program
         switch (option)
         {
             case 'a':
-                IEnumerable<BO.ProductForList> products = access.BoProduct.GetProducts();
+                IEnumerable<BO.ProductForList> products = access.Product.GetProducts();
                 foreach (var item in products)
                 {
                     Console.WriteLine(item);
@@ -147,7 +151,7 @@ internal class Program
                 Console.WriteLine("Enter the ID product you seek to view\n");
                 isRead = int.TryParse(Console.ReadLine(), out int ID);
                 product.Id = ID;
-                Console.WriteLine(access.BoProduct.GetProductById(ID));
+                Console.WriteLine(access.Product.GetProductById(ID));
                 break;
 
 
@@ -155,7 +159,7 @@ internal class Program
                 Console.WriteLine("Enter the ID product\n");
                 isRead = int.TryParse(Console.ReadLine(), out int Id);
 
-                 Console.WriteLine(access.BoProduct.GetProductItem(Id, cart)); 
+                 Console.WriteLine(access.Product.GetProductItem(Id, cart)); 
                 
 
                 break;
@@ -172,14 +176,14 @@ internal class Program
                 product.Category = a;
                 isRead = int.TryParse(Console.ReadLine(), out int inStock);
                 product.InStock = inStock;
-                access.BoProduct.Add(product);
+                access.Product.Add(product);
                 Console.WriteLine();
                 break;
 
             case 'e':
                 Console.WriteLine("Enter the product ID of the product you want to delete\n");                
                 isRead = int.TryParse(Console.ReadLine(), out ID);
-                access.BoProduct.Delete(ID);
+                access.Product.Delete(ID);
                 
                 break;
 
@@ -197,7 +201,7 @@ internal class Program
                 product.Category = c;
                 isRead = int.TryParse(Console.ReadLine(), out  inStock);
                 product.InStock = inStock;
-                access.BoProduct.Update(product);
+                access.Product.Update(product);
 
                 break;
             default:
@@ -215,16 +219,17 @@ internal class Program
         cart.CostomerName = Console.ReadLine();
         Console.WriteLine("\nPlease enter your address: ");
         cart.CostomerAdress = Console.ReadLine();
-
+        
+       
         EnterEmail();
         Console.WriteLine();
-
-        IDal access = new DalList1(); // Access to the data layer
-
+        DalApi.IDal? access = DalApi.Factory.Get(); // Access to the data layer
+        BlApi.IBl? accessBo = BlApi.Factory.Get();
+ 
 
 
         //Catalog of all products
-        IEnumerable<DO.Product> products = access.Product.GetList();
+        IEnumerable<BO.ProductForList> products = (IEnumerable<BO.ProductForList>)accessBo.Product.GetProducts();
         foreach (var item in products)
         {
             Console.WriteLine(item);

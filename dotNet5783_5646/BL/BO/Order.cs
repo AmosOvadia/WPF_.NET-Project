@@ -5,15 +5,14 @@ namespace BO;
 public class Order
 {
     public int Id { get; set; }
-    public string CostomerName { get; set; }
-    public string CostomerEmail { get; set; }
-    public string CostomerAdress { get; set; }
-    public OrderStatus Status { get; set; } 
-    public DateTime? PaymentDate { get; set; }  
+    public string? CostomerName { get; set; }
+    public string? CostomerEmail { get; set; }
+    public string? CostomerAdress { get; set; }
+    public OrderStatus? Status { get; set; } 
     public DateTime? OrderDate { get; set; }
     public DateTime? ShipDate { get; set; }
     public DateTime? DeliveryDate { get; set; }
-    public List<OrderItem> Items { get; set; } 
+    public List<OrderItem?>? Items { get; set; } 
     public double TotalPrice { get; set; }
     //to print the object
     public override string ToString()
@@ -24,7 +23,6 @@ public class Order
     Costomer Email: {CostomerEmail}
     CostomerAdress: {CostomerAdress}
     Status: {Status}
-    Payment Date: {PaymentDate}
     Order Date: {OrderDate}   
     Ship Date: {ShipDate}
     Delivery Date: {DeliveryDate}
@@ -34,15 +32,15 @@ public class Order
         int i = 1;
         if (Items != null)
         {
-            foreach (var item in Items)
+            foreach (BO.OrderItem? item in Items)
             {
                 str += $@" {i}:
-            Id:{item.Id}
-            Name:{item.Name}
-            Price:{item.Price}
-            ProductId: {item.ProductId}
-            Amount: {item.Amount}
-            TotalPrice: {item.TotalPrice}
+            Id:{item?.Id}
+            Name:{item?.Name}
+            Price:{item?.Price}
+            ProductId: {item?.ProductId}
+            Amount: {item?.Amount}
+            TotalPrice: {item?.TotalPrice}
             ";
                 i++;
             }

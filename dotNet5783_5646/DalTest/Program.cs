@@ -1,15 +1,15 @@
-﻿using Dal;
+﻿
 using DO;
 using DalApi;
 using static DO.Enums;
 using System;
 
-//namespace DalTest;
+namespace DalTest;
 
 internal class Program
 {
 
-    public static IDal dal = new DalList1();
+   public static DalApi.IDal? dal = DalApi.Factory.Get();
 
     static void Main(string[] args)
     {
@@ -20,7 +20,7 @@ internal class Program
             "Enter 0 to exit\n");
        
 
-        
+     
         
         int.TryParse(Console.ReadLine(), out op);
 
@@ -77,6 +77,7 @@ internal class Program
 
                             try
                             {
+                                
                                 dal.Product.Add(newProduct);
                                 Console.WriteLine("");
                             }
@@ -104,7 +105,7 @@ internal class Program
                         case 3://print all prodocts
 
                             tempInt = 0; // counter
-                            List<Product> listProducts = new List<Product>(dal.Product.GetList());
+                            List<Product?> listProducts = new List<Product?>(dal.Product.GetList());
                             foreach (Product product in listProducts)
                             {
                                 if (tempInt == dal.Product.Leangth()) 
@@ -234,7 +235,7 @@ internal class Program
                             Console.WriteLine(printOrder);
                             break;
                         case 3://print all orders
-                            List<Order> arrOrders = new List<Order>( dal.Order.GetList());
+                            List<Order?> arrOrders = new List<Order?>( dal.Order.GetList());
                             int counter = 0;
                             foreach (Order order in arrOrders)
                             {
@@ -367,7 +368,7 @@ internal class Program
 
                         case 3://print OrderItem
 
-                            List<OrderItem> arrOrderItems = new List<OrderItem> (dal.OrderItem.GetList());
+                            List<OrderItem?> arrOrderItems = new List<OrderItem?> (dal.OrderItem.GetList());
                             int counter = 0;
                             foreach (OrderItem orderItem in arrOrderItems)
                             {

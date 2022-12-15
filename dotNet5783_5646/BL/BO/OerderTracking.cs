@@ -5,8 +5,8 @@ namespace BO;
 public class OerderTracking
 {
     public int Id { get; set; } 
-    public OrderStatus Status { get; set; }
-    public List<(DateTime?, string)> Tracking { get; set; }
+    public OrderStatus? Status { get; set; }
+    public List<(DateTime?, string?)>? Tracking { get; set; }
 
     //to print the object
     public override string ToString()

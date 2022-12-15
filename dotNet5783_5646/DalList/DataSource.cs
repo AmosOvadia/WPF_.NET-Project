@@ -13,12 +13,12 @@ namespace Dal;
 internal static class DataSource
 {
 
-    static DataSource() { s_Initialize(); }
+    static DataSource() { S_Initialize(); }
                           
     static readonly Random random = new Random();
-    internal static List<Product> productList = new List<Product>();
-    internal static List<Order> orderList = new List<Order>();
-    internal static List<OrderItem> orderItemList = new List<OrderItem>();
+    internal static List<Product?> productList = new List<Product?>();
+    internal static List<Order?> orderList = new List<Order?>();
+    internal static List<OrderItem?> orderItemList = new List<OrderItem?>();
 
     //internal static Prodcut[] productArr = new Prodcut[50];
     //internal static Order[] orderArr = new Order[100];
@@ -93,7 +93,7 @@ internal static class DataSource
         {
             Order temp = new Order();
 
-            temp.Id = Config.getIdOreder;
+            temp.Id = Config.GetIdOreder;
             temp.CostomerName = costomerName[i];
             temp.CostomerEmail = CostomerEmail[i];
             temp.CostomerAdress = CostomerAdress[i];
@@ -118,13 +118,13 @@ internal static class DataSource
     private static void s_addOrderItem()
     {
         OrderItem temp = new OrderItem();
-        foreach (var item in orderList)      
+        foreach (DO.Order item in orderList)      
         {
             int i = 0;
             foreach (Product productTemp in productList)
             {
                 i++;
-                temp.Id = Config.getIdOrederItem;
+                temp.Id = Config.GetIdOrederItem;
                 temp.OrderId = item.Id;
                 temp.ProductId = productTemp.Id;
                 temp.Price = productTemp.Price;
@@ -146,7 +146,7 @@ internal static class DataSource
             Product temp = new Product();
 
 
-            temp.Id =  Config.getIdProduct;
+            temp.Id =  Config.GetIdProduct;
             temp.Name = name[i];
             temp.Price = prices[i];
             temp.Category = ProdactCategory.Shirts;
@@ -158,7 +158,7 @@ internal static class DataSource
         for ( j = i; j < 8; j++)
         {
             Product temp = new Product();
-            temp.Id = Config.getIdProduct;
+            temp.Id = Config.GetIdProduct;
             temp.Name = name[i];
             temp.Price = prices[i];
             temp.Category = ProdactCategory.Hats;
@@ -170,7 +170,7 @@ internal static class DataSource
         for ( k = j; k < 10; k++)
         {
             Product temp = new Product();
-            temp.Id = Config.getIdProduct;
+            temp.Id = Config.GetIdProduct;
             temp.Name = name[i];
             temp.Price = prices[i];
             temp.Category = ProdactCategory.Shoes;
@@ -185,7 +185,7 @@ internal static class DataSource
 
 
 
-    public static void s_Initialize()
+    public static void S_Initialize()
     {
         s_addProduct();
         s_addOrder();
@@ -194,7 +194,7 @@ internal static class DataSource
     internal static class Config
     {
         private static int idProduct = random.Next(100000, 999999);
-        public static int getIdProduct
+        public static int GetIdProduct
         {
             get
             {
@@ -204,7 +204,7 @@ internal static class DataSource
         }
 
         private static int idOreder = 100000;
-        public static int getIdOreder
+        public static int GetIdOreder
         {
             get
             {
@@ -214,7 +214,7 @@ internal static class DataSource
         }
 
         private static int idOrederItem = 100000;
-        public static int getIdOrederItem
+        public static int GetIdOrederItem
         {
             get
             {

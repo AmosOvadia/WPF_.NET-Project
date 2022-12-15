@@ -1,5 +1,4 @@
-﻿using BO;
-namespace BlApi;
+﻿namespace BlApi;
 
 //Interface of the logical entity - Cart
 public interface ICart

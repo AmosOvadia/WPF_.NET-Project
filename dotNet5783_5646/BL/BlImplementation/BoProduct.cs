@@ -1,5 +1,4 @@
 ﻿using BlApi;
-using Dal;
 using DalApi;
 using static BO.Enums;
 using static DO.Enums;
@@ -10,7 +9,7 @@ namespace BlImplementation;
 
 internal class BoProduct : BlApi.IProduct
 {
-    private IDal dal = new Dal.DalList1();
+    DalApi.IDal? dal = DalApi.Factory.Get();
 
     //The function adds a product to the logical layer
     public void Add(BO.Product product)
@@ -19,21 +18,26 @@ internal class BoProduct : BlApi.IProduct
         if (product.Id < 0) // check if ID card is correct
         {   throw new BO.TheVariableIsLessThanTheNumberZero("Id is less than 0");
         }
-        if (product.Name == null) //Check if the name exists
-        {  throw new BO.VariableIsNull("The name is null");
+        if (product.Name == "") //Check if the name exists
+        {
+            throw new BO.VariableIsNull("The name is null");
         }
-        if (product.Price < 0) // check if the price is not negative
+        if (product.Price <= 0) // check if the price is not negative
         {  throw new BO.TheVariableIsLessThanTheNumberZero("the price is less than 0");
         }
         if (product.InStock < 0) //check if the quantity is negative
         { 
             throw new BO.TheVariableIsLessThanTheNumberZero("the stock is less than 0");
         }
+        if ((DO.Enums.ProdactCategory?)product.Category == null)
+        {
+            throw new BO.InputError("You need to enter a category");
+        }
         DO.Product Do_Product = new DO.Product();
         Do_Product.Id = product.Id;
         Do_Product.Name = product.Name;
         Do_Product.Price = product.Price;
-        Do_Product.Category = (DO.Enums.ProdactCategory)product.Category;
+        Do_Product.Category = (DO.Enums.ProdactCategory?)product.Category;
         Do_Product.InStock = product.InStock;
         dal.Product.Add(Do_Product); //Add the product in the data layer
     }
@@ -43,9 +47,9 @@ internal class BoProduct : BlApi.IProduct
     public void Delete(int id)
     {
         bool check = false; //If such a product does not exist
-        List<DO.Product> products = new List<DO.Product>();
-        products = (List<DO.Product>)dal.Product.GetList();
-        foreach (var product in products) //Go through all the existing products in the data layer
+        List<DO.Product?> products = new List<DO.Product?>();
+        products = (List<DO.Product?>)dal.Product.GetList();
+        foreach (DO.Product product in products) //Go through all the existing products in the data layer
         {
             if (id == product.Id) //Is the product in the list the one we are looking for
             {
@@ -100,7 +104,7 @@ internal class BoProduct : BlApi.IProduct
             productItem.Amount = 0;
             foreach (BO.OrderItem item in cart.Items) //Go through all items
             {
-                if(id == item.ProductId) //Is this the ID of the product we are looking for?
+                if(id == item?.ProductId) //Is this the ID of the product we are looking for?
                     productItem.Amount += item.Amount;//Add up the amount
             }
             return productItem;
@@ -111,23 +115,39 @@ internal class BoProduct : BlApi.IProduct
 
 
     //The function returns all products
-    public IEnumerable<BO.ProductForList> GetProducts()
+    public IEnumerable<BO.ProductForList?> GetProducts(Func<DO.Product?, bool>? func)
     {
-        int i = 0;
-        List<BO.ProductForList> productsForList = new List<BO.ProductForList>();
-        List<DO.Product> products = new List<DO.Product>();
-        products = (List<DO.Product>)dal.Product.GetList();
-        foreach (DO.Product product in products) //Go through all the products in the data layer
+        List<BO.ProductForList?> productsForList = new List<BO.ProductForList?>();
+        List<DO.Product?> products = new List<DO.Product?>();
+        products = (List<DO.Product?>)dal.Product.GetList();
+        if (func != null)
         {
-            //add to the logical layer
-            productsForList.Add(new BO.ProductForList
+            foreach (DO.Product product in products) //Go through all the products in the data layer
             {
-                Id = products[i].Id,
-                Category = (BO.Enums.ProdactCategory)products[i].Category,
-                Name = products[i].Name,
-                Price = products[i].Price
-            });
-            i++;
+                //add to the logical layer
+                if(func(product))
+                productsForList.Add(new BO.ProductForList
+                {
+                    Id = product.Id,
+                    Category = (BO.Enums.ProdactCategory)product.Category,
+                    Name = product.Name,
+                    Price = product.Price
+                });
+            }
+        }
+        else
+        {
+            foreach (DO.Product product in products) //Go through all the products in the data layer
+            {
+                //add to the logical layer
+                productsForList.Add(new BO.ProductForList
+                {
+                    Id = product.Id,
+                    Category = (BO.Enums.ProdactCategory?)product.Category,
+                    Name = product.Name,
+                    Price = product.Price
+                });
+            }
         }
         return productsForList;
     }
@@ -139,11 +159,11 @@ internal class BoProduct : BlApi.IProduct
         {
             throw new BO.TheVariableIsLessThanTheNumberZero("Id is less than 0");
         }
-        if (product.Name == null) //Check if the name exists
+        if (product.Name == "") //Check if the name exists
         {
             throw new BO.VariableIsNull("The name is null");
         }
-        if (product.Price < 0) // check if the price is not negative
+        if (product.Price <= 0) // check if the price is not negative
         {
             throw new BO.TheVariableIsLessThanTheNumberZero("the price is less than 0");
         }
@@ -151,12 +171,16 @@ internal class BoProduct : BlApi.IProduct
         {
             throw new BO.TheVariableIsLessThanTheNumberZero("the stock is less than 0");
         }
+        if ((DO.Enums.ProdactCategory?)product.Category == null)
+        {
+            throw new BO.InputError("You need to enter a category");
+        }
         DO.Product Do_Product = new DO.Product();
 
         Do_Product.Id = (int)product.Id;
         Do_Product.Name = product.Name;
         Do_Product.Price = product.Price;
-        Do_Product.Category = (DO.Enums.ProdactCategory)product.Category;
+        Do_Product.Category = (DO.Enums.ProdactCategory?)product.Category;
         Do_Product.InStock = product.InStock;
         try
         {

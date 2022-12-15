@@ -1,0 +1,22 @@
+﻿<Window x:Class="PL.OrderManager.UpdateForManager"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PL.OrderManager"
+        mc:Ignorable="d"
+        Title="UpdateForManager" Height="450" Width="800">
+    <Grid>
+        <TextBox x:Name="Password" HorizontalAlignment="Left" Margin="514,84,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="Password_TextChanged"/>
+        <TextBox x:Name="Amount" HorizontalAlignment="Left" Margin="514,199,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="ProductId" HorizontalAlignment="Left" Margin="514,162,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="OrderId" HorizontalAlignment="Left" Margin="514,124,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <Label x:Name="LabelPassword" Content="Password" HorizontalAlignment="Left" Margin="434,75,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="LabelOrderId" Content="Order Id" HorizontalAlignment="Left" Margin="433,124,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="LabelPruductId" Content="Product Id" HorizontalAlignment="Left" Margin="434,158,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="LabelAmount" Content="Amount" HorizontalAlignment="Left" Margin="434,191,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="CheckPassword" Content="Check" HorizontalAlignment="Left" Margin="690,84,0,0" VerticalAlignment="Top" Click="CheckPassword_Click"/>
+        <Button x:Name="UpdateForManager1" Content="Update" HorizontalAlignment="Left" Margin="705,328,0,0" VerticalAlignment="Top" Click="UpdateForManager1_Click"/>
+
+    </Grid>
+</Window>

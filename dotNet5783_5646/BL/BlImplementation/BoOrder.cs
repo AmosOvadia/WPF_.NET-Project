@@ -1,5 +1,4 @@
 ﻿using BlApi;
-using Dal;
 using DalApi;
 using static BO.Enums;
 using static DO.Enums;
@@ -10,17 +9,16 @@ namespace BlImplementation;
 
 internal class BoOrder : BlApi.IOrder
 {
-    private IDal dal = new Dal.DalList1();
-
+    DalApi.IDal? dal = DalApi.Factory.Get();
     // The function returns a list of all orders
-    public IEnumerable<BO.OrderForList> GetOrders()
+    public IEnumerable<BO.OrderForList?> GetOrders()
     {
-        List<BO.OrderForList> orderForList = new List<BO.OrderForList>(); 
-        List<DO.Order> DoOrders = new List<DO.Order>(); 
-        List<DO.OrderItem> DoOrderItems = new List<DO.OrderItem>();
+        List<BO.OrderForList?> orderForList = new List<BO.OrderForList?>(); 
+        List<DO.Order?> DoOrders = new List<DO.Order?>(); 
+        List<DO.OrderItem?> DoOrderItems = new List<DO.OrderItem?>();
 
-        DoOrders = (List<DO.Order>)dal.Order.GetList();
-        DoOrderItems = (List<DO.OrderItem>)dal.OrderItem.GetList();
+        DoOrders = (List<DO.Order?>)dal.Order.GetList();
+        DoOrderItems = (List<DO.OrderItem?>)dal.OrderItem.GetList();
 
 
 
@@ -41,7 +39,7 @@ internal class BoOrder : BlApi.IOrder
             {
                 orderForList1.Status = OrderStatus.Confirmed;
             }
-            foreach (var item in DoOrderItems) //We will go over all order items from the data layer
+            foreach (DO.OrderItem item in DoOrderItems) //We will go over all order items from the data layer
             {
                 if (item.OrderId == orderForList1.Id)
                 {
@@ -60,17 +58,17 @@ internal class BoOrder : BlApi.IOrder
     public BO.Order GetOrder(int id)
     {
         DO.Order DoOrder = new DO.Order();
-        List<DO.OrderItem> DoOrderItem = new List<DO.OrderItem>();
-        List<DO.Product> DoProducts = new List<DO.Product>();
-        List<BO.OrderItem> boOrderItems = new List<BO.OrderItem>();
+        List<DO.OrderItem?> DoOrderItem = new List<DO.OrderItem?>();
+        List<DO.Product?> DoProducts = new List<DO.Product?>();
+        List<BO.OrderItem?> boOrderItems = new List<BO.OrderItem?>();
         BO.Order? BoOrder = new BO.Order();
         if (id > 0) //Check if the ID is valid
         {
             int i = 0;
             double finalTotalPrice = 0;
             DoOrder = dal.Order.Get(id);
-            DoOrderItem = (List<DO.OrderItem>)dal.OrderItem.GetList();
-            DoProducts = (List<DO.Product>)dal.Product.GetList();
+            DoOrderItem = (List<DO.OrderItem?>)dal.OrderItem.GetList();
+            DoProducts = (List<DO.Product?>)dal.Product.GetList();
 
             BoOrder.Id = DoOrder.Id;
             BoOrder.CostomerName = DoOrder.CostomerName;
@@ -93,7 +91,7 @@ internal class BoOrder : BlApi.IOrder
                     boOrderItem.Amount = item.Amount;
                     boOrderItem.TotalPrice = item.Price * item.Amount;
                     finalTotalPrice += item.Price * item.Amount;
-                    foreach (var product in DoProducts) //We will go over the entire product from the data layer
+                    foreach (DO.Product product in DoProducts) //We will go over the entire product from the data layer
                     {
                         if (boOrderItem.ProductId == product.Id)
                         {
@@ -131,8 +129,8 @@ internal class BoOrder : BlApi.IOrder
     public BO.OerderTracking Order_tracking(int id)
     {
         string Item;
-        List<DO.Order> DoOrders = new List<DO.Order>();
-        DoOrders = (List<DO.Order>)dal.Order.GetList();
+        List<DO.Order?> DoOrders = new List<DO.Order?>();
+        DoOrders = (List<DO.Order?>)dal.Order.GetList();
         BO.OerderTracking BoOrderTracking = new BO.OerderTracking();
         bool check = false; //Does such an ID exist?
         foreach (DO.Order doOrder in DoOrders) // We will go through each order from the data layer
@@ -175,14 +173,16 @@ internal class BoOrder : BlApi.IOrder
     // The function updates the dispatch date of the shipment
     public BO.Order OrderShippingUpdate(int id)
     {
-        List<BO.OrderItem> boOrderItems = new List<BO.OrderItem>();
-        List<DO.Product> DoProducts = new List<DO.Product>();
-        DoProducts = (List<DO.Product>)dal.Product.GetList();
+        List<BO.OrderItem?> boOrderItems = new List<BO.OrderItem?>();
+        List<DO.Product?> DoProducts = new List<DO.Product?>();
+        DoProducts = (List<DO.Product?>)dal.Product.GetList();
         double finalTotalPrice = 0;
-        List<DO.OrderItem> orderItems = new List<DO.OrderItem>();
-        orderItems = (List<DO.OrderItem>)dal.OrderItem.GetList();
-        List<DO.Order>? DoOrders = new List<DO.Order>();
-        DoOrders = (List<DO.Order>)dal.Order.GetList();
+        List<DO.OrderItem?> orderItems = new List<DO.OrderItem?>();
+        orderItems = (List<DO.OrderItem?>)dal.OrderItem.GetList();
+
+        List<DO.Order?> DoOrders = new List<DO.Order?>();
+        DoOrders = (List<DO.Order?>)dal.Order.GetList();
+
         BO.Order BoOrder = new BO.Order();
         DO.Order temp = new DO.Order();
         bool check = false;
@@ -211,7 +211,7 @@ internal class BoOrder : BlApi.IOrder
                 BoOrder.Status = OrderStatus.Sent;
 
                 
-                foreach (var item in orderItems) //We will go through each order item from the data layer
+                foreach (DO.OrderItem item in orderItems) //We will go through each order item from the data layer
                 {
                     if (id == item.OrderId)
                     {
@@ -222,19 +222,15 @@ internal class BoOrder : BlApi.IOrder
                         boOrderItem.Amount = item.Amount;
                         boOrderItem.TotalPrice = item.Price * item.Amount;
                         finalTotalPrice += item.Price * item.Amount;
-                        foreach (var product in DoProducts)
+                        foreach (DO.Product product in DoProducts)
                         {
                             if (boOrderItem.ProductId == product.Id)
                             {
                                 boOrderItem.Name = product.Name;
                                 break;
                             }
-                        }
-                        
-                        
-                        
+                        }                     
                         boOrderItems.Add(boOrderItem); //We will add order item to the logical layer
-
                     }
                 }
             }
@@ -256,14 +252,14 @@ internal class BoOrder : BlApi.IOrder
     public BO.Order OrderDeliveryUpdate(int id)
     {
 
-        List<BO.OrderItem> boOrderItems = new List<BO.OrderItem>();
-        List<DO.Product> DoProducts = new List<DO.Product>();
-        DoProducts = (List<DO.Product>)dal.Product.GetList();
+        List<BO.OrderItem?> boOrderItems = new List<BO.OrderItem?>();
+        List<DO.Product?> DoProducts = new List<DO.Product?>();
+        DoProducts = (List<DO.Product?>)dal.Product.GetList();
         double finalTotalPrice = 0;
-        List<DO.OrderItem> orderItems = new List<DO.OrderItem>();
-        orderItems = (List<DO.OrderItem>)dal.OrderItem.GetList();
-        List<DO.Order>? DoOrders = new List<DO.Order>();
-        DoOrders = (List<DO.Order>)dal.Order.GetList();
+        List<DO.OrderItem?> orderItems = new List<DO.OrderItem?>();
+        orderItems = (List<DO.OrderItem?>)dal.OrderItem.GetList();
+        List<DO.Order?> DoOrders = new List<DO.Order?>();
+        DoOrders = (List<DO.Order?>)dal.Order.GetList();
         BO.Order BoOrder = new BO.Order();
         DO.Order temp = new DO.Order();
         bool check = false;
@@ -292,7 +288,7 @@ internal class BoOrder : BlApi.IOrder
                 BoOrder.Status = OrderStatus.Sent;
 
 
-                foreach (var item in orderItems) //We will go through each order item from the data layer
+                foreach (DO.OrderItem item in orderItems) //We will go through each order item from the data layer
                 {
                     if (id == item.OrderId) //Is this the order item we are looking for?
                     {
@@ -303,7 +299,7 @@ internal class BoOrder : BlApi.IOrder
                         boOrderItem.Amount = item.Amount;
                         boOrderItem.TotalPrice = item.Price * item.Amount;
                         finalTotalPrice += item.Price * item.Amount;
-                        foreach (var product in DoProducts)  //We will go through each product from the data layer
+                        foreach (DO.Product product in DoProducts)  //We will go through each product from the data layer
                         {
                             if (boOrderItem.ProductId == product.Id)//Is this the product we are looking for?
                             {
@@ -332,7 +328,75 @@ internal class BoOrder : BlApi.IOrder
         throw new BO.TheIdDoesNotExistInTheDatabase("No Id in list");
     }
 
- }
+
+    //Possibility for the administrator to change product details in the order
+    public void UpdateOrederManager(int amount, int orderId, int prodId)
+    {         
+            BO.Order ord = GetOrder(orderId);
+            List<DO.Product> products = new List<DO.Product>();
+            products = (List<DO.Product>)dal.Product.GetList();
+            DO.Product product = new DO.Product();
+            BO.OrderItem order_item = new BO.OrderItem();
+            List<BO.OrderItem> order_items = new List<BO.OrderItem>();
+            bool flag = false; //Check if we have found the product and updated it
+        if (ord.Items == null) // If there are no products
+        {
+                throw new BO.VariableIsNull("can't find the list of items");
+            }
+            foreach (BO.OrderItem orderItem in ord.Items) // Go through the entire order itrm
+        {
+                if (prodId == orderItem.ProductId) //Is this the product we would like to change?
+            {
+                    if (orderItem.Amount + amount < 0) //Is the amount the manager entered possible
+                {
+                        throw new BO.TheVariableIsLessThanTheNumberZero("The quantity is less than the quantity to be reduced");
+                    }
+                    foreach (DO.Product prod in products) //We will go over all the products
+                {
+                        if (prod.Id == prodId) // If this is the product we are looking for
+                    {
+                            if (amount > prod.InStock) //Is the amount the manager entered possible
+                        {
+                                throw new BO.TheIdDoesNotExistInTheDatabase("not existing enough items in stock");
+                            }
+                            product.Id = prod.Id;
+                            product.Name = prod.Name;
+                            product.Price = prod.Price;
+                            product.InStock -= amount;
+                            product.Category = prod.Category;
+                            dal.Product.Update(product); //We will update the data layer
+                        flag = true;  
+                        }
+
+                    }
+                    if (flag == false) //If we did not find the product
+                    throw new BO.TheIdDoesNotExistInTheDatabase("product id not exists");
+
+                    order_item.Price = orderItem.Price;
+                    order_item.Id = orderItem.ProductId;
+                    order_item.Amount = orderItem.Amount + amount;
+                    order_item.Id = orderItem.Id;
+                    order_item.Name = orderItem.Name;
+                    order_item.TotalPrice = orderItem.TotalPrice + amount * order_item.Price;
+                    order_items.Add(order_item); //We will add the order item to the temporary list
+                ord.TotalPrice += amount * order_item.Price; //to sum
+            }
+                else
+                    order_items.Add(orderItem);
+            }
+            ord.Items = order_items;
+    }
+
+
+
+
+
+
+
+
+
+
+}
 
 
 

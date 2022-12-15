@@ -6,12 +6,11 @@ namespace BO;
 //The fields of the logical entity - cart
 public class Cart
 {
-    public string CostomerName { get; set; }
-    public string CostomerEmail { get; set; }
-    public string CostomerAdress { get; set; }
-    public List<OrderItem> Items { get; set; }
+    public string? CostomerName { get; set; }
+    public string? CostomerEmail { get; set; }
+    public string? CostomerAdress { get; set; }
+    public List<OrderItem?>? Items { get; set; }
     public double TotalPrice { get; set; }
-
 
     //to print the object
     public override string ToString()

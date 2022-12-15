@@ -5,9 +5,9 @@ namespace DO;
 public struct Order
 {
     public int Id { get; set; }
-    public string CostomerName { get; set; }
-    public string CostomerEmail { get; set; }
-    public string CostomerAdress { get; set; }
+    public string? CostomerName { get; set; }
+    public string? CostomerEmail { get; set; }
+    public string? CostomerAdress { get; set; }
     public DateTime? OrderDate { get; set; }
     public DateTime? ShipDate { get; set; }
     public DateTime? DeliveryDate { get; set; }
