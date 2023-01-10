@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace PL.OrderManager
+namespace PL
 {
     /// <summary>
     /// Interaction logic for UpdateForManager.xaml
@@ -21,7 +20,6 @@ namespace PL.OrderManager
     public partial class UpdateForManager : Window
     {
         BlApi.IBl? bl = BlApi.Factory.Get();
-
         public UpdateForManager()
         {
             InitializeComponent();
@@ -36,13 +34,7 @@ namespace PL.OrderManager
 
             UpdateForManager1.Visibility = Visibility.Hidden;
         }
-
-        private void Password_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-        private void CheckPassword_Click(object sender, RoutedEventArgs e)
+            private void CheckPassword_Click(object sender, RoutedEventArgs e)
         {
             int temp;
             int.TryParse(Password.Text, out temp);
@@ -72,7 +64,7 @@ namespace PL.OrderManager
 
         private void UpdateForManager1_Click(object sender, RoutedEventArgs e)
         {
-            int temp1, temp2,temp3;
+            int temp1, temp2, temp3;
 
             int.TryParse(OrderId.Text, out temp1);
             int.TryParse(ProductId.Text, out temp2);
@@ -106,6 +98,11 @@ namespace PL.OrderManager
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void Password_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }

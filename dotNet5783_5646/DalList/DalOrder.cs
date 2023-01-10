@@ -1,5 +1,4 @@
 ﻿using DalApi;
-using DO;
 using Microsoft.VisualBasic.FileIO;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -11,97 +10,71 @@ using static Dal.DataSource;
 internal class DalOrder : IOrder
 {
     //A function that adds an order
-    public int Add(Order ord)
-    {       
-        foreach (Order? order in orderList)
+    public int Add(DO.Order ord)
+    {
+        
+        var check = (from p in orderList
+                     select p?.Id).Where(temp => temp == ord.Id);
+
+
+        if (check.Count() == 0)
         {
-            if (order?.Id == ord.Id)
-            {
-                throw new TheIDAlreadyExistsInTheDatabase("The order already exist");               
-            }
-        }
-        orderList.Add(ord);
-        return ord.Id;
+            DataSource.orderList.Add(ord); //We will add the new order to the list
+            return ord.Id;
+        } //If it already exists we will throw an exception
+        throw new DO.TheIDAlreadyExistsInTheDatabase("The order already exist");
     }
+
 
     //A function that deletes an order 
     public void Delete(int id)
     {
-        bool check = false;
-        foreach (Order? order in orderList)
+        var check = (from p in orderList
+                     select p?.Id).Where(temp => temp == id);
+        if (check.Count() == 1)
         {
-            if (order?.Id == id)
-            {
-                check = true;
-                orderList.Remove(order);
-            }
+            DataSource.orderList.Remove(orderList.FirstOrDefault(item => item?.Id == id)); //We will remove the order from the list
         }
-        if (!check)
-            throw new TheIdentityCardDoesNotExistInTheDatabase("The order does not exist");
-
+        else//If we did not delete = the member did not exist, we will throw an exception
+            throw new DO.TheIdentityCardDoesNotExistInTheDatabase("The order does not exist");
     }
+
+
+
 
     //A function that returns order item by ID
-    public Order Get(int orderId)
+    public DO.Order Get(int orderId)
     {
-        foreach (Order? temp in orderList)
-        {
-            if (temp?.Id == orderId)
-            {
-                return (Order)temp;
-            }
-        }
-        throw new TheIdentityCardDoesNotExistInTheDatabase("The order does not exist");
+        var order = orderList.FirstOrDefault(p => p?.Id == orderId);
+        if (order != null)
+            return (DO.Order)order;
+        //If the order does not exist
+        throw new DO.TheIdentityCardDoesNotExistInTheDatabase("The order does not exist");
     }
 
+
+
     //A function that updates an order
-    public void Update(Order order)
+    public void Update(DO.Order order)
     {
-        bool check = false;
-        Order item = new Order();
-        foreach (Order? temp in orderList)
-        {
-            if (temp?.Id == order.Id)
-            {
-                check = true;
-                item.Id = order.Id;
-                item.CostomerName = order.CostomerName;
-                item.CostomerAdress = order.CostomerAdress;
-                item.CostomerEmail = order.CostomerEmail;
-                item.OrderDate = order.OrderDate;   
-                if(order.ShipDate != null)
-                    item.ShipDate = order.ShipDate;
-                if (order.DeliveryDate != null)
-                    item.DeliveryDate = order.DeliveryDate;
-            }
-        }
-        if (!check) //If we didn't find the organ
-        {
-            throw new TheIdentityCardDoesNotExistInTheDatabase("The order does not exist");
-        }     
+        var temp = orderList.FirstOrDefault(p => p?.Id == order.Id);
+        int i = orderList.IndexOf(temp);
+        if (i != -1)
+            orderList[i] = order;
+        else //If we didn't update any order = it didn't exist
+            throw new DO.TheIdentityCardDoesNotExistInTheDatabase("The order does not exist");    
     }
 
     //A function that returns a list of order 
-    public IEnumerable<Order?> GetList(Func<Order?, bool>? func)
+    public IEnumerable<DO.Order?> GetList(Func<DO.Order?, bool>? func)
     {
-        if (func == null)
+        if (func == null) // the full list
         {
-            List<Order?> list = new List<Order?>();
-            foreach (Order? item in orderList)
-            {
-                if (item?.Id > 0)
-                    list.Add(item);
-            }
-            return list;
+            return orderList;
         }
         else
         {
-            List<Order?> list = new List<Order?>();
-            foreach (Order? item in orderList)
-            {
-                if (func(item))
-                    list.Add(item);
-            }
+            var list = orderList.Select(p => p).Where(temp => func(temp)).ToList();
             return list;
         }
     }
@@ -113,21 +86,16 @@ internal class DalOrder : IOrder
     }
 
     //A function that returns a order according to a certain filter
-    Order ICrud<Order>.GetByDelegate(Func<Order?, bool>? func)
+    DO.Order ICrud<DO.Order>.GetByDelegate(Func<DO.Order?, bool>? func)
     {
         if (func != null)
         {
-            foreach (Order temp in orderList)
-            {
-                if (func(temp))
-                {
-                    return temp;
-                }
-            }
+            var p = orderList.FirstOrDefault(p => func(p));
+            if (p != null)
+                return (DO.Order)p;
         }
         //If we did not find the order that meets the filter requirements
-
-        throw new TheIdentityCardDoesNotExistInTheDatabase("The order does not exist");
+        throw new DO.TheIdentityCardDoesNotExistInTheDatabase("The order does not exist");
     }
 
-    }
+}

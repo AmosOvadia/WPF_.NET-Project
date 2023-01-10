@@ -1,0 +1,58 @@
+﻿<Window x:Class="PL.OrderForList"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        xmlns:local="clr-namespace:PL"
+        mc:Ignorable="d"
+        Title="OrderForList" Height="450" Width="800">
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="/backround2.jpg"/>
+        </Grid.Background>
+        <ListView x:Name="ListOfOrders" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="184,72,148,115" 
+                    ItemsSource = "{Binding orderForList}"
+            SelectionChanged="OrderForList_SelectionChanged"
+            MouseDoubleClick="OrderForList_MouseDoubleClick">
+
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn
+                        DisplayMemberBinding="{Binding Id}"
+                        Header="Id"
+                            
+                        Width="60" />
+
+                    <GridViewColumn
+                        DisplayMemberBinding="{Binding CostomerName}"
+                        Header="CostomerName"
+                            
+                        Width="100" />
+
+                    <GridViewColumn
+                        DisplayMemberBinding="{Binding Status}"
+                        Header="Status"
+                            
+                        Width="60" />
+
+                    <GridViewColumn
+                        DisplayMemberBinding="{Binding AmountOfItems}"
+                        Header="AmountOfItems"
+                            
+                        Width="140" />
+
+                    <GridViewColumn
+                        DisplayMemberBinding="{Binding TotalPrice}"
+                        Header="TotalPrice"
+                            
+                        Width="80" />
+                </GridView>
+
+            </ListView.View>
+
+        </ListView>
+        <Button x:Name="Back" Content="Back" HorizontalAlignment="Left" Height="30" Margin="168,379,0,0" VerticalAlignment="Top" Width="70" Click="Back_Click"/>
+
+    </Grid>
+</Window>

@@ -5,9 +5,9 @@ namespace BO;
 public class Order
 {
     public int Id { get; set; }
-    public string? CostomerName { get; set; }
-    public string? CostomerEmail { get; set; }
-    public string? CostomerAdress { get; set; }
+    public string? CustomerName { get; set; }
+    public string? CustomerEmail { get; set; }
+    public string? CustomerAdress { get; set; }
     public OrderStatus? Status { get; set; } 
     public DateTime? OrderDate { get; set; }
     public DateTime? ShipDate { get; set; }
@@ -19,9 +19,9 @@ public class Order
     {
       string str =  $@"
     Id: {Id} 
-    Costomer Name: {CostomerName}
-    Costomer Email: {CostomerEmail}
-    CostomerAdress: {CostomerAdress}
+    Costomer Name: {CustomerName}
+    Costomer Email: {CustomerEmail}
+    CostomerAdress: {CustomerAdress}
     Status: {Status}
     Order Date: {OrderDate}   
     Ship Date: {ShipDate}

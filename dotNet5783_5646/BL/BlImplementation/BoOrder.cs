@@ -1,7 +1,10 @@
 ﻿using BlApi;
 using DalApi;
+using System.Diagnostics;
 using static BO.Enums;
 using static DO.Enums;
+using System.Linq;
+using System.Security.Cryptography;
 
 namespace BlImplementation;
 
@@ -13,7 +16,7 @@ internal class BoOrder : BlApi.IOrder
     // The function returns a list of all orders
     public IEnumerable<BO.OrderForList?> GetOrders()
     {
-        List<BO.OrderForList?> orderForList = new List<BO.OrderForList?>(); 
+       // List<BO.OrderForList?> orderForList = new List<BO.OrderForList?>(); 
         List<DO.Order?> DoOrders = new List<DO.Order?>(); 
         List<DO.OrderItem?> DoOrderItems = new List<DO.OrderItem?>();
 
@@ -22,35 +25,16 @@ internal class BoOrder : BlApi.IOrder
 
 
 
-        foreach (DO.Order DoOrder in DoOrders) //We will go through all the products from the data layer
+        var ordersForList = DoOrders.Select(doOrder => new BO.OrderForList
         {
-            BO.OrderForList orderForList1 = new BO.OrderForList();
-            orderForList1.Id = DoOrder.Id;
-            orderForList1.CostomerName = DoOrder.CostomerName;
-            if (DoOrder.DeliveryDate != null) //check that the date exists
-            {
-                orderForList1.Status = OrderStatus.Delivered;
-            }
-            else if (DoOrder.ShipDate != null)//check that the date exists
-            {
-                orderForList1.Status = OrderStatus.Sent;
-            }
-            else
-            {
-                orderForList1.Status = OrderStatus.Confirmed;
-            }
-            foreach (DO.OrderItem item in DoOrderItems) //We will go over all order items from the data layer
-            {
-                if (item.OrderId == orderForList1.Id)
-                {
-                    orderForList1.TotalPrice += item.Price * item.Amount;
-                    orderForList1.AmountOfItems = item.Amount;
-                }
-            }
-
-            orderForList.Add(orderForList1); //We will add to the list of orders in the logical layer
-        }
-        return orderForList;
+            Id = (int)(doOrder?.Id)!,
+            CostomerName = doOrder?.CustomerName,
+            Status = doOrder?.DeliveryDate != null ? OrderStatus.Delivered : doOrder?.ShipDate != null ? OrderStatus.Sent : OrderStatus.Confirmed,
+            TotalPrice = (double)DoOrderItems.Where(item => item?.OrderId == doOrder?.Id).Sum(item => item?.Price * (int)item?.Amount!)!,
+            AmountOfItems = DoOrderItems.Where(item => item?.OrderId == doOrder?.Id).Sum(item => (int)item?.Amount!)
+        }).ToList();
+        
+        return (List<BO.OrderForList?>)ordersForList!;
     }
 
 
@@ -60,7 +44,7 @@ internal class BoOrder : BlApi.IOrder
         DO.Order DoOrder = new DO.Order();
         List<DO.OrderItem?> DoOrderItem = new List<DO.OrderItem?>();
         List<DO.Product?> DoProducts = new List<DO.Product?>();
-        List<BO.OrderItem?> boOrderItems = new List<BO.OrderItem?>();
+       // List<BO.OrderItem?> boOrderItems = new List<BO.OrderItem?>();
         BO.Order? BoOrder = new BO.Order();
         if (id > 0) //Check if the ID is valid
         {
@@ -71,39 +55,34 @@ internal class BoOrder : BlApi.IOrder
             DoProducts = (List<DO.Product?>)dal.Product.GetList();
 
             BoOrder.Id = DoOrder.Id;
-            BoOrder.CostomerName = DoOrder.CostomerName;
-            BoOrder.CostomerEmail = DoOrder.CostomerEmail;
-            BoOrder.CostomerAdress = DoOrder.CostomerAdress;
-            BoOrder.OrderDate = (DateTime)DoOrder.OrderDate;
+            BoOrder.CustomerName = DoOrder.CustomerName;
+            BoOrder.CustomerEmail = DoOrder.CustomerEmail;
+            BoOrder.CustomerAdress = DoOrder.CustomerAdress;
+            BoOrder.OrderDate = (DateTime)DoOrder.OrderDate!;
             if (DoOrder.ShipDate != null) //Check if the date exists
                 BoOrder.ShipDate = (DateTime)DoOrder.ShipDate;
             if (DoOrder.DeliveryDate != null) //Check if the date exists
                 BoOrder.DeliveryDate = (DateTime)DoOrder.DeliveryDate;
 
-            foreach (DO.OrderItem item in DoOrderItem) //We will go through all the OrderItem from the data layer
-            {
-                if (id == item.OrderId)
-                {
-                    BO.OrderItem boOrderItem = new BO.OrderItem();
-                    boOrderItem.Id = item.OrderId;
-                    boOrderItem.ProductId = item.ProductId;
-                    boOrderItem.Price = item.Price;
-                    boOrderItem.Amount = item.Amount;
-                    boOrderItem.TotalPrice = item.Price * item.Amount;
-                    finalTotalPrice += item.Price * item.Amount;
-                    foreach (DO.Product product in DoProducts) //We will go over the entire product from the data layer
-                    {
-                        if (boOrderItem.ProductId == product.Id)
-                        {
-                            boOrderItem.Name = product.Name;
-                            break;
-                        }
-                    }
-                   
-                    boOrderItems.Add(boOrderItem); //We will add to the list of order items in the logical layer     
-                }
 
-            }
+            var boOrderItems = DoOrderItem
+       .Where(item => item?.OrderId == id)
+       .Select(item =>
+       {
+           int? amount = item?.Amount;
+           return new BO.OrderItem
+           {
+               Id = (int)(item?.OrderId)!,
+               ProductId = (int)(item?.ProductId)!,
+               Price = (double)(item?.Price)!,
+               Amount = (int)(item?.Amount)!,
+               TotalPrice = (double)(item?.Price * amount)!,
+               Name = DoProducts.First(product => product?.Id == item?.ProductId)?.Name
+           };
+       })
+       .ToList();
+
+            finalTotalPrice = (double)boOrderItems.Sum(item => item?.TotalPrice)!;
             BoOrder.Items = boOrderItems;
             BoOrder.TotalPrice = finalTotalPrice;
             if (DoOrder.DeliveryDate <= DateTime.Now)
@@ -133,34 +112,24 @@ internal class BoOrder : BlApi.IOrder
         DoOrders = (List<DO.Order?>)dal.Order.GetList();
         BO.OerderTracking BoOrderTracking = new BO.OerderTracking();
         bool check = false; //Does such an ID exist?
-        foreach (DO.Order doOrder in DoOrders) // We will go through each order from the data layer
+
+
+        var query = DoOrders.Where(x => x?.Id == id)
+          .Select(x => new BO.OerderTracking
+          {
+              Id = (int)(x?.Id)!,
+              Status = (x?.DeliveryDate != null && x?.DeliveryDate <= DateTime.Now) ? OrderStatus.Delivered :
+          (x?.ShipDate != null && x?.ShipDate <= DateTime.Now) ? OrderStatus.Sent : OrderStatus.Confirmed,
+              Tracking = new List<(DateTime? myTime, string? Name)>
+           {
+            (DateTime.Now, (x?.DeliveryDate != null && x?.DeliveryDate <= DateTime.Now) ? "the package was deliverd" :
+            (x?.ShipDate != null && x?.ShipDate <= DateTime.Now) ? "the package was sent" : "the order is confirmed in the system")
+           }
+          }).FirstOrDefault();
+        if (query != null)
         {
-            if (id == doOrder.Id)
-            {
-                check = true; //Such an ID exists
-                BoOrderTracking.Id = (int)doOrder.Id;
-                if (doOrder.DeliveryDate != null && doOrder.DeliveryDate <= DateTime.Now)
-                {
-                    BoOrderTracking.Status = OrderStatus.Delivered;
-                    Item = "the package was deliverd";
-                }
-                else if (doOrder.ShipDate != null && doOrder.ShipDate <= DateTime.Now) 
-                {
-                    BoOrderTracking.Status = OrderStatus.Sent;
-                    Item = "the package was sent";
-                }
-                else
-                {
-                    BoOrderTracking.Status = OrderStatus.Confirmed;
-                    Item = "the order is confermed in the system";
-                }
-                var tupleList = new List<(DateTime? myTime, string Name)>
-                {
-                     (DateTime.Now, Item)
-                };
-                BoOrderTracking.Tracking = tupleList;
-                break;
-            }
+            check = true;
+            BoOrderTracking = query;
         }
         if (!check) //If there was no such ID
         {
@@ -169,6 +138,8 @@ internal class BoOrder : BlApi.IOrder
         return BoOrderTracking;
 
     }
+
+
 
     // The function updates the dispatch date of the shipment
     public BO.Order OrderShippingUpdate(int id)
@@ -186,67 +157,51 @@ internal class BoOrder : BlApi.IOrder
         BO.Order BoOrder = new BO.Order();
         DO.Order temp = new DO.Order();
         bool check = false;
-        foreach (DO.Order doOrder in DoOrders) //We will go through each order from the data layer
+        var doOrder = DoOrders.Where(o => o?.Id == id).FirstOrDefault();
+        if (doOrder != null)
         {
-            if (id == doOrder.Id)
+            check = true;
+            if (doOrder?.ShipDate == null)
+                BoOrder.ShipDate = temp.ShipDate = DateTime.Now;
+            else
+                BoOrder.ShipDate = temp.ShipDate = doOrder?.ShipDate;
+            BoOrder.Id = temp.Id = (int)(doOrder?.Id)!;
+            BoOrder.CustomerName = temp.CustomerName = doOrder?.CustomerName;
+            BoOrder.CustomerAdress = temp.CustomerAdress = doOrder?.CustomerAdress;
+            BoOrder.CustomerEmail = temp.CustomerEmail = doOrder?.CustomerEmail;
+            BoOrder.OrderDate = temp.OrderDate = doOrder?.OrderDate;
+
+            if (doOrder?.DeliveryDate != null)
+                BoOrder.DeliveryDate = temp.DeliveryDate = doOrder?.DeliveryDate;
+            BoOrder.Status = OrderStatus.Sent;
+
+            var orderItemsForOrder = orderItems.Where(i => i?.OrderId == id);
+            foreach (var item in orderItemsForOrder)
             {
-                check = true;
-                if (doOrder.ShipDate == null) //check that the date exists
-                {
-                    BoOrder.ShipDate = temp.ShipDate = DateTime.Now;
-                }
-                else
-                {
-                    BoOrder.ShipDate = temp.ShipDate = doOrder.ShipDate;
-                }
-                BoOrder.Id = temp.Id = doOrder.Id;
-                BoOrder.CostomerName = temp.CostomerName = doOrder.CostomerName;
-                BoOrder.CostomerAdress = temp.CostomerAdress = doOrder.CostomerAdress;
-                BoOrder.CostomerEmail = temp.CostomerEmail = doOrder.CostomerEmail;
-                BoOrder.OrderDate = temp.OrderDate = doOrder.OrderDate;
-
-
-                if (doOrder.DeliveryDate != null) //check that the date exists
-                    BoOrder.DeliveryDate = temp.DeliveryDate = doOrder.DeliveryDate;
-                BoOrder.Status = OrderStatus.Sent;
-
-                
-                foreach (DO.OrderItem item in orderItems) //We will go through each order item from the data layer
-                {
-                    if (id == item.OrderId)
-                    {
-                        BO.OrderItem boOrderItem = new BO.OrderItem();
-                        boOrderItem.Id = item.OrderId;
-                        boOrderItem.ProductId = item.ProductId;
-                        boOrderItem.Price = item.Price;
-                        boOrderItem.Amount = item.Amount;
-                        boOrderItem.TotalPrice = item.Price * item.Amount;
-                        finalTotalPrice += item.Price * item.Amount;
-                        foreach (DO.Product product in DoProducts)
-                        {
-                            if (boOrderItem.ProductId == product.Id)
-                            {
-                                boOrderItem.Name = product.Name;
-                                break;
-                            }
-                        }                     
-                        boOrderItems.Add(boOrderItem); //We will add order item to the logical layer
-                    }
-                }
+                BO.OrderItem boOrderItem = new BO.OrderItem();
+                boOrderItem.Id = (int)(item?.OrderId)!;
+                boOrderItem.ProductId = (int)(item?.ProductId)!;
+                boOrderItem.Price = (double)(item?.Price)!;
+                boOrderItem.Amount = (int)(item?.Amount)!;
+                boOrderItem.TotalPrice = (double)(item?.Price * item?.Amount)!;
+                finalTotalPrice += (double)item?.Price! * (int)item?.Amount!;
+                var product = DoProducts.Where(p => p?.Id == boOrderItem.ProductId).FirstOrDefault();
+                if (product != null)
+                    boOrderItem.Name = product?.Name;
+                boOrderItems.Add(boOrderItem);
             }
         }
-            if (check)
-            {
+        if (check)
+        {
             BoOrder.TotalPrice = finalTotalPrice;
             BoOrder.Items = boOrderItems;
-            dal.Order.Update(temp); //We will update the Order object in the data layer
+            dal.Order.Update(temp);
             BoOrder.TotalPrice = finalTotalPrice;
-                return BoOrder;
-            }
-
-            throw new BO.TheIdDoesNotExistInTheDatabase("No Id in list");
-        
+            return BoOrder;
+        }
+        throw new BO.TheIdDoesNotExistInTheDatabase("No Id in list");      
     }
+
 
     //  The function updates the shipment's arrival date
     public BO.Order OrderDeliveryUpdate(int id)
@@ -263,66 +218,52 @@ internal class BoOrder : BlApi.IOrder
         BO.Order BoOrder = new BO.Order();
         DO.Order temp = new DO.Order();
         bool check = false;
-        foreach (DO.Order doOrder in DoOrders) ////We will go through each order from the data layer
+
+
+
+
+        var boOrder = DoOrders.Where(x => x?.Id == id)
+.Select(x => new BO.Order
+{
+    DeliveryDate = x?.DeliveryDate ?? DateTime.Now,
+    Id = (int)(x?.Id)!,
+    CustomerName = x?.CustomerName,
+    CustomerAdress = x?.CustomerAdress,
+    CustomerEmail = x?.CustomerEmail,
+    OrderDate = x?.OrderDate,
+    ShipDate = x?.ShipDate,
+    Status = OrderStatus.Sent,
+    TotalPrice = (double)orderItems.Where(y => y?.OrderId == id)
+.Select(y => y?.Price * y?.Amount)
+.Sum()!,
+    Items = orderItems.Where(y => y?.OrderId == id)
+.Select(y => new BO.OrderItem
+{
+    Id = (int)(y?.OrderId)!,
+    ProductId = (int)y?.ProductId!,
+    Price = (double)y?.Price!,
+    Amount = (int)y?.Amount!,
+    TotalPrice = (double)y?.Price! * (double)y?.Amount!,
+    Name = DoProducts.Where(z => z?.Id == y?.ProductId)
+.Select(z => z?.Name)
+.FirstOrDefault()
+}).ToList()!
+}).FirstOrDefault();
+
+        if (boOrder != null)
         {
-            if (id == doOrder.Id) //Is this the order we are looking for?
+            dal.Order.Update(new DO.Order
             {
-                check = true;
-                if (doOrder.DeliveryDate == null) //Does the date exist?
-                {
-                    BoOrder.DeliveryDate = temp.DeliveryDate = DateTime.Now;
-                }
-                else
-                {
-                    BoOrder.DeliveryDate = temp.DeliveryDate = doOrder.DeliveryDate;
-                }
-                BoOrder.Id = temp.Id = doOrder.Id;
-                BoOrder.CostomerName = temp.CostomerName = doOrder.CostomerName;
-                BoOrder.CostomerAdress = temp.CostomerAdress = doOrder.CostomerAdress;
-                BoOrder.CostomerEmail = temp.CostomerEmail = doOrder.CostomerEmail;
-                BoOrder.OrderDate = temp.OrderDate = doOrder.OrderDate;
-
-
-                if (doOrder.ShipDate != null) //Does the date exist?
-                    BoOrder.ShipDate = temp.ShipDate = doOrder.ShipDate;
-                BoOrder.Status = OrderStatus.Sent;
-
-
-                foreach (DO.OrderItem item in orderItems) //We will go through each order item from the data layer
-                {
-                    if (id == item.OrderId) //Is this the order item we are looking for?
-                    {
-                        BO.OrderItem boOrderItem = new BO.OrderItem();
-                        boOrderItem.Id = item.OrderId;
-                        boOrderItem.ProductId = item.ProductId;
-                        boOrderItem.Price = item.Price;
-                        boOrderItem.Amount = item.Amount;
-                        boOrderItem.TotalPrice = item.Price * item.Amount;
-                        finalTotalPrice += item.Price * item.Amount;
-                        foreach (DO.Product product in DoProducts)  //We will go through each product from the data layer
-                        {
-                            if (boOrderItem.ProductId == product.Id)//Is this the product we are looking for?
-                            {
-                                boOrderItem.Name = product.Name;
-                                break;
-                            }
-                        }
-
-
-
-                        boOrderItems.Add(boOrderItem); //We will add order item to the logical layer
-
-                    }
-                }
-            }
-        }
-        if (check)
-        {
-            BoOrder.TotalPrice = finalTotalPrice;
-            BoOrder.Items = boOrderItems;
-            dal.Order.Update(temp); //We will update the Order object in the data layer
-            BoOrder.TotalPrice = finalTotalPrice;
-            return BoOrder;
+                DeliveryDate = boOrder.DeliveryDate,
+                Id = boOrder.Id,
+                CustomerName = boOrder.CustomerName,
+                CustomerAdress = boOrder.CustomerAdress,
+                CustomerEmail = boOrder.CustomerEmail,
+                OrderDate = boOrder.OrderDate,
+                ShipDate = boOrder.ShipDate,
+                //Status = boOrder.Status
+            });
+            return boOrder;
         }
 
         throw new BO.TheIdDoesNotExistInTheDatabase("No Id in list");
@@ -331,72 +272,74 @@ internal class BoOrder : BlApi.IOrder
 
     //Possibility for the administrator to change product details in the order
     public void UpdateOrederManager(int amount, int orderId, int prodId)
-    {         
-            BO.Order ord = GetOrder(orderId);
-            List<DO.Product> products = new List<DO.Product>();
-            products = (List<DO.Product>)dal.Product.GetList();
-            DO.Product product = new DO.Product();
-            BO.OrderItem order_item = new BO.OrderItem();
-            List<BO.OrderItem> order_items = new List<BO.OrderItem>();
-            bool flag = false; //Check if we have found the product and updated it
+    {
+        
+
+
+
+
+
+
+
+        BO.Order ord = GetOrder(orderId);
+        List<DO.Product> products = new List<DO.Product>();
+        products = (List<DO.Product>)dal.Product.GetList();
+        DO.Product product = new DO.Product();
+        BO.OrderItem order_item = new BO.OrderItem();
+        List<BO.OrderItem> order_items = new List<BO.OrderItem>();
+
         if (ord.Items == null) // If there are no products
         {
-                throw new BO.VariableIsNull("can't find the list of items");
-            }
-            foreach (BO.OrderItem orderItem in ord.Items) // Go through the entire order itrm
+            throw new BO.VariableIsNull("can't find the list of items");
+        }
+
+        foreach (BO.OrderItem orderItem in ord.Items)
         {
-                if (prodId == orderItem.ProductId) //Is this the product we would like to change?
+            if (prodId == orderItem.ProductId)
             {
-                    if (orderItem.Amount + amount < 0) //Is the amount the manager entered possible
+                if (orderItem.Amount + amount < 0) //Is the amount the manager entered possible
                 {
-                        throw new BO.TheVariableIsLessThanTheNumberZero("The quantity is less than the quantity to be reduced");
-                    }
-                    foreach (DO.Product prod in products) //We will go over all the products
-                {
-                        if (prod.Id == prodId) // If this is the product we are looking for
-                    {
-                            if (amount > prod.InStock) //Is the amount the manager entered possible
-                        {
-                                throw new BO.TheIdDoesNotExistInTheDatabase("not existing enough items in stock");
-                            }
-                            product.Id = prod.Id;
-                            product.Name = prod.Name;
-                            product.Price = prod.Price;
-                            product.InStock -= amount;
-                            product.Category = prod.Category;
-                            dal.Product.Update(product); //We will update the data layer
-                        flag = true;  
-                        }
+                    throw new BO.TheVariableIsLessThanTheNumberZero("The quantity is less than the quantity to be reduced");
+                }
 
-                    }
-                    if (flag == false) //If we did not find the product
+                DO.Product? prod = products.FirstOrDefault(p => p.Id == prodId);
+                if (prod == null)
+                {
                     throw new BO.TheIdDoesNotExistInTheDatabase("product id not exists");
+                }
 
-                    order_item.Price = orderItem.Price;
-                    order_item.Id = orderItem.ProductId;
-                    order_item.Amount = orderItem.Amount + amount;
-                    order_item.Id = orderItem.Id;
-                    order_item.Name = orderItem.Name;
-                    order_item.TotalPrice = orderItem.TotalPrice + amount * order_item.Price;
-                    order_items.Add(order_item); //We will add the order item to the temporary list
-                ord.TotalPrice += amount * order_item.Price; //to sum
+                if (amount > prod?.InStock) //Is the amount the manager entered possible
+                {
+                    throw new BO.TheIdDoesNotExistInTheDatabase("not existing enough items in stock");
+                }
+
+                product.Id = (int)prod?.Id!;
+                product.Name = prod?.Name;
+                product.Price = (double)prod?.Price!;
+                product.InStock -= amount;
+                product.Category = prod?.Category;
+                dal.Product.Update(product);
+
+                order_item.Price = orderItem.Price;
+                order_item.Id = orderItem.ProductId;
+                order_item.Amount = orderItem.Amount + amount;
+                order_item.Id = orderItem.Id;
+                order_item.Name = orderItem.Name;
+                order_item.TotalPrice = orderItem.TotalPrice + amount * order_item.Price;
+                order_items.Add(order_item);
+                ord.TotalPrice += amount * order_item.Price;
             }
-                else
-                    order_items.Add(orderItem);
+            else
+            {
+                order_items.Add(orderItem);
             }
-            ord.Items = order_items;
+        }
+        ord.Items = order_items;
     }
+        
 
 
-
-
-
-
-
-
-
-
-}
+    }
 
 
 

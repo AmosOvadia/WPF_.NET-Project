@@ -10,7 +10,7 @@ public class ProductItem
     public double Price { get; set; }
     public ProdactCategory? Category { get; set; }
     public int Amount { get; set; } 
-    public int InStock { get; set; }
+    public bool InStock { get; set; }
 
 
     //to print the object

@@ -6,20 +6,15 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
 	  <BaseOutputPath>$(SolutionDir)\bin\</BaseOutputPath>
-	<OutputPath>$(SolutionDir)\bin\</OutputPath>
-	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-	<UseCommonOutputDirectory>true</UseCommonOutputDirectory>
 	  <OutputPath>$(SolutionDir)\bin\</OutputPath>
 	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	  <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-	  
-    <BaseOutputPath>$(SolutionDir)\bin\</BaseOutputPath>
+	  <UseCommonOutputDirectory>true</UseCommonOutputDirectory>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="backround.jpg" />
-    <None Remove="Product\backround2.jpg" />
+    <None Remove="backround2.jpg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,7 +23,7 @@
 
   <ItemGroup>
     <Resource Include="backround.jpg" />
-    <Resource Include="Product\backround2.jpg" />
+    <Resource Include="backround2.jpg" />
   </ItemGroup>
 
 </Project>

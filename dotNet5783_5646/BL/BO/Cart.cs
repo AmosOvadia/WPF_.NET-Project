@@ -6,9 +6,9 @@ namespace BO;
 //The fields of the logical entity - cart
 public class Cart
 {
-    public string? CostomerName { get; set; }
-    public string? CostomerEmail { get; set; }
-    public string? CostomerAdress { get; set; }
+    public string? CustomerName { get; set; }
+    public string? CustomerEmail { get; set; }
+    public string? CustomerAdress { get; set; }
     public List<OrderItem?>? Items { get; set; }
     public double TotalPrice { get; set; }
 
@@ -16,9 +16,9 @@ public class Cart
     public override string ToString()
     {
         string str = $@"
-    Costomer Name : {CostomerName}
-    Costomer Email : {CostomerEmail}
-    CostomerAdress : {CostomerAdress}
+    Costomer Name : {CustomerName}
+    Costomer Email : {CustomerEmail}
+    CostomerAdress : {CustomerAdress}
     ";
         int i = 1;
         if (Items != null)

@@ -15,153 +15,168 @@ internal class BoCart : BlApi.ICart
 
     //The function adds an item to the shopping cart
     public BO.Cart Add(BO.Cart cart, int id)
-    {     
+    {
         List<DO.Product?> Do_Products = new List<DO.Product?>();
-        Do_Products = (List<DO.Product?>)dal.Product.GetList();
-
+        Do_Products = (List<DO.Product?>)dal!.Product.GetList();
+        var product = Do_Products.FirstOrDefault(p => p?.Id == id);
+        int i = Do_Products.IndexOf(product);
+        bool c = false;
         if (cart.Items == null)
         {
-            foreach (DO.Product product in Do_Products)
+
+            if (product != null)
             {
-                if (product.Id == id)
+                BO.OrderItem orderItem = new BO.OrderItem();
+                orderItem.ProductId = id;
+                orderItem.Id = dal.OrderItem.GetList().Last()?.Id + 1 ?? 0; ///+ 1;
+                orderItem.Price = (double)product?.Price!;
+                orderItem.TotalPrice = (double)product?.Price!;
+                if (product?.InStock >= 1) //Check if the product is in stock
                 {
-                    BO.OrderItem orderItem = new BO.OrderItem();
-                    orderItem.ProductId = id;
-                    orderItem.Id = dal.OrderItem.GetList().Last()?.Id +1 ?? 0;    ///+ 1; 
-                    orderItem.Price = product.Price;
-                    orderItem.TotalPrice = product.Price;
-                    if (product.InStock >= 1) //Check if the product is in stock
-                    {
-                        orderItem.Amount = 1;
-                    }
-                    else throw new BO.OutOfStock("Out of stock");
-                    orderItem.Name = product.Name;
-                    List<BO.OrderItem?> boOrderItems = new List<BO.OrderItem?>();
-                    boOrderItems.Add(orderItem);
-                    cart.Items = boOrderItems;
-                    cart.TotalPrice += orderItem.TotalPrice; //Add this to the final amount
-                    return cart;
+                    orderItem.Amount = 1;
+                    DO.Product temp = new DO.Product();
+                    temp.Id = id;
+                    temp.Name = product?.Name;
+                    temp.Price = (double)product?.Price!;
+                    temp.InStock = (int)product?.InStock! - 1;
+                    Do_Products[i] = temp;
                 }
-                  
+                else throw new BO.OutOfStock("Out of stock");
+                orderItem.Name = product?.Name;
+                List<BO.OrderItem?> boOrderItems = new List<BO.OrderItem?>();
+                boOrderItems.Add(orderItem);
+                cart.Items = boOrderItems;
+                cart.TotalPrice += orderItem.TotalPrice; //Add this to the final amount
+
+                DO.Product p = dal.Product.Get(id);
+                p.InStock--;
+                dal.Product.Update(p);
+                return cart;
             }
             throw new BO.TheIdDoesNotExistInTheDatabase("The Id Does Not Exist");
         }
 
-
         //In case the member already exists
-        foreach (BO.OrderItem? item in cart.Items)
-        {   
-            if (item?.Id == id)
-            {
-                foreach (DO.Product product in Do_Products)
-                {
-                    if (product.InStock > item.Amount)
-                    {
-                        item.TotalPrice = (++item.Amount) * (item.Price);
-                        cart.TotalPrice += item.Price;
-                    }
-                    else throw new BO.OutOfStock("Out of stock");
-                }
-                return cart;
-            }
-        }
-       // In case the item does not exist in the cart
-        foreach (DO.Product product in Do_Products)
+        var item = cart.Items.FirstOrDefault(i => (int)i?.ProductId! == id);
+        if (item != null)
         {
-            if (product.Id == id)
+            var product1 = Do_Products.FirstOrDefault(p => p?.Id == id);
+            if (product1?.InStock > item.Amount)
             {
-
-
-                BO.OrderItem orderItem = new BO.OrderItem();
-                orderItem.ProductId = id;
-                orderItem.Id = dal.OrderItem.GetList().Last()?.Id + 1 ?? 0;
-                orderItem.Price = product.Price;
-                orderItem.TotalPrice = product.Price;
-                if (product.InStock >= 1) //Check if the product is in stock
-                {
-                    orderItem.Amount = 1;
-                }
-                else throw new BO.OutOfStock("Out of stock");
-                orderItem.Name = product.Name;
-
-                cart.Items.Add(orderItem); // Add the order item to the list
-                cart.TotalPrice += orderItem.TotalPrice; //Add this to the final amount
-                return cart;
+                DO.Product temp = new DO.Product();
+                temp.Id = id;
+                temp.Name = product1?.Name;
+                temp.Price = (double)product1?.Price!;
+                temp.InStock = (int)product1?.InStock! - 1;
+                Do_Products[i] = temp;
+                item.TotalPrice = (++item.Amount) * (item.Price);
+                cart.TotalPrice += item.Price;
             }
+            else throw new BO.OutOfStock("Out of stock");
 
+            DO.Product p = dal.Product.Get(id);
+            p.InStock--;
+            dal.Product.Update(p);
+            return cart;
+        }
+
+        // In case the item does not exist in the cart
+        var productToAdd = Do_Products.FirstOrDefault(p => p?.Id == id);
+        if (productToAdd != null)
+        {
+            BO.OrderItem orderItem = new BO.OrderItem();
+            orderItem.ProductId = id;
+            orderItem.Id = dal.OrderItem.GetList().Last()?.Id + 1 ?? 0;
+            orderItem.Price = (double)productToAdd?.Price!;
+            orderItem.TotalPrice = (double)productToAdd?.Price!;
+            if (productToAdd?.InStock >= 1) //Check if the product is in stock
+            {
+                orderItem.Amount = 1;
+            }
+            else throw new BO.OutOfStock("Out of stock");
+            orderItem.Name = productToAdd?.Name;
+
+            cart.Items.Add(orderItem); // Add the order item to the list
+            cart.TotalPrice += orderItem.TotalPrice; //Add this to the final amount
+
+            DO.Product p = dal.Product.Get(id);
+            p.InStock--;
+            dal.Product.Update(p);
+            return cart;
         }
         throw new BO.TheIdDoesNotExistInTheDatabase("The Id Does Not Exist");
-    }
+    
+}
 
 
-    //Create an order
-    public void MakeAnOrder(BO.Cart cart)
-    {       
+        //Create an order
+        public void MakeAnOrder(BO.Cart cart)
+    {
         if (cart.Items == null)
+            throw new BO.VariableIsNull("the cart is empty");
+
+
+        var Do_Products = dal.Product.GetList().ToList();
+
+        if (cart.Items!.Any(item => item?.Amount <= 0 || cart.CustomerName == null || cart.CustomerEmail == null || cart.CustomerAdress == null || !IsValid(cart.CustomerEmail)))
         {
-            throw new BO.IsEmpty("The shopping cart is empty");
+            throw new BO.InputError("Input error");
         }
-        List<DO.Product?> Do_Products = new List<DO.Product?>();
-        Do_Products = (List<DO.Product?>)dal.Product.GetList();
-        foreach (BO.OrderItem? item in cart.Items) //Check that all data is correct
+
+        if (cart.Items!.Any(item => Do_Products.Any(product => product?.Id == item?.ProductId && item?.Amount > product?.InStock)))
         {
-            if (item?.Amount <= 0 || cart.CostomerName == null || cart.CostomerEmail == null || cart.CostomerAdress == null || !IsValid(cart.CostomerEmail))
+            throw new BO.OutOfStock("Out of stock");
+        }
+
+        var order = new DO.Order
+        {
+            Id = dal.Order.GetList().LastOrDefault()?.Id + 1 ?? 0,
+            CustomerName = cart.CustomerName,
+            CustomerEmail = cart.CustomerEmail,
+            CustomerAdress = cart.CustomerAdress,
+            OrderDate = DateTime.Now,
+            ShipDate = null,
+            DeliveryDate = null
+        };
+        int orderId = dal.Order.Add(order);
+
+        foreach (var item in cart.Items)
+        {
+            var orderItem = new DO.OrderItem
             {
-                throw new BO.InputError("Input error");
-            }
-            foreach (DO.Product product in Do_Products)
+                Id = dal.OrderItem.GetList().LastOrDefault()?.Id + 1 ?? 0,
+                OrderId = orderId,
+                ProductId = (int)item?.ProductId!,
+                Price = item.Price,
+                Amount = item.Amount
+            };
+            int k = dal.OrderItem.Add(orderItem);
+
+            var product = Do_Products.FirstOrDefault(p => p?.Id == item.ProductId);
+            if (product != null)
             {
-                if (item?.ProductId == product.Id)
+                var temp = new DO.Product
                 {
-                    if (item?.Amount > product.InStock)  //check that the quantity is less than the quantity in stock
-                        throw new BO.OutOfStock("Out of stock");
-                }
+                    Id = (int)product?.Id!,
+                    Price = (double)product?.Price!,
+                    Category = product?.Category,
+                    InStock = (int)product?.InStock! - item.Amount,
+                    Name = product?.Name
+                };
+                dal.Product.Update(temp);
             }
         }
-
-        DO.Order order = new DO.Order();
-        order.Id = dal.Order.GetList().Last()?.Id ?? 0 + 1;
-        order.CostomerName = cart.CostomerName;
-        order.CostomerEmail = cart.CostomerEmail;
-        order.CostomerAdress = cart.CostomerAdress;
-        order.OrderDate = DateTime.Now;
-        order.ShipDate = null;
-        order.DeliveryDate = null;
-        int orderId = dal.Order.Add(order); // Add an order to the data layer
-
-        foreach (BO.OrderItem? item in cart.Items)
-        {
-            DO.OrderItem orderItem  = new DO.OrderItem();
-            orderItem.Id = dal.OrderItem.GetList().Last()?.Id + 1 ?? 0;
-            orderItem.OrderId = orderId;
-            orderItem.ProductId = item.ProductId;
-            orderItem.Price = item.Price;
-            orderItem.Amount = item.Amount;
-            int k = dal.OrderItem.Add(orderItem); //We will add list details to the data layer
-            foreach (DO.Product product in Do_Products)
-            {
-                if (product.Id == item.ProductId)
-                {                   
-                    DO.Product temp = new DO.Product();
-                    temp.Id = product.Id;
-                    temp.Price = product.Price;
-                    temp.Category = product.Category;
-                    temp.InStock = product.InStock - item.Amount;
-                    temp.Name = product.Name;
-                    dal.Product.Update(temp); //Updates the stock quantity in the data layer
-                    break;
-                }
-            }
-        }
+        cart.Items = null;
+        cart.TotalPrice = 0;
     }
 
 
 
 
 
-    // Auxiliary function for checking the correctness of an email address
-   
-    bool IsValid(string email)
+        // Auxiliary function for checking the correctness of an email address
+
+        bool IsValid(string email)
     {
         var trimmedEmail = email.Trim();
 
@@ -185,61 +200,64 @@ internal class BoCart : BlApi.ICart
 
     // The function updates the quantity
     public BO.Cart UpdateProductQuantity(BO.Cart cart, int Id, int TheNewQuantity)
+
     {
         if (cart.Items == null)
         {
             throw new BO.IsEmpty("The shopping cart is empty");
         }
-        if (TheNewQuantity < 0)  //check for correctness
+        if (TheNewQuantity < 0) //check for correctness
         {
             throw new BO.TheVariableIsLessThanTheNumberZero("There is no such thing as a negative quantity");
         }
         List<DO.Product?> Do_Products = new List<DO.Product?>();
         Do_Products = (List<DO.Product?>)dal.Product.GetList();
-        foreach (BO.OrderItem? item in cart.Items)
+
+        BO.OrderItem? item = cart.Items.Where(x => x.ProductId == Id).FirstOrDefault();
+        if (item != null)
         {
-            if (item?.ProductId == Id)
+            if (item.Amount < TheNewQuantity) //In case he wants to add
             {
-                if (item.Amount < TheNewQuantity) //In case he wants to add
-                {
-                    cart.TotalPrice -= item.TotalPrice;
-                    foreach (DO.Product product in Do_Products)
+                cart.TotalPrice -= item.TotalPrice;
+                DO.Product product = dal.Product.Get(Id);
+                    if (product.InStock >= TheNewQuantity)
                     {
-                        if (product.Id == Id)
-                        {
-                            if (product.InStock >= TheNewQuantity)
-                            {
-                                item.Amount = TheNewQuantity;
-                                item.TotalPrice = item.Price * TheNewQuantity;
-                            }
-                            else throw new BO.OutOfStock("Out of stock");
-                        }
+                        product.InStock -= TheNewQuantity - item.Amount;
+                        item.Amount = TheNewQuantity;
+                        item.TotalPrice = item.Price * TheNewQuantity;
+                    dal.Product.Update(product);
                     }
-                    cart.TotalPrice += item.TotalPrice;
-                    return cart;
-                }
-                else
+                    else throw new BO.OutOfStock("Out of stock");               
+                cart.TotalPrice += item.TotalPrice;
+                return cart;
+            }
+            else
+            {
+                if (item.Amount > TheNewQuantity) //In case he wants to subtract
                 {
-                    if (item.Amount > TheNewQuantity) //In case he wants to subtract
+                    DO.Product product = dal.Product.Get(Id);
+                    if (TheNewQuantity == 0)
                     {
-                        if (TheNewQuantity == 0)
-                        {
-                            cart.TotalPrice -= item.TotalPrice;
-                            cart.Items.Remove(item);
-                        }
-                        else
-                        {
-                            cart.TotalPrice -= item.TotalPrice;
-                            item.Amount = TheNewQuantity;
-                            item.TotalPrice = (item.Price * TheNewQuantity);
-                            cart.TotalPrice += item.TotalPrice;
-                        }
+                       //  = TheNewQuantity;
+                        product.InStock += item.Amount;                        
+                        cart.TotalPrice -= item.TotalPrice;
+                        cart.Items.Remove(item);
                     }
-                    return cart;
+                    else
+                    {
+                        product.InStock += item.Amount - TheNewQuantity;
+
+                        cart.TotalPrice -= item.TotalPrice;
+                        item.Amount = TheNewQuantity;
+                        item.TotalPrice = (item.Price * TheNewQuantity);
+                        cart.TotalPrice += item.TotalPrice;
+                    }
+                    dal.Product.Update(product);
+
                 }
+                return cart;
             }
         }
-        throw new BO.TheIdDoesNotExistInTheDatabase("The Id Does Not Exist"); 
-
+        throw new BO.TheIdDoesNotExistInTheDatabase("The Id Does Not Exist");
     }
 }

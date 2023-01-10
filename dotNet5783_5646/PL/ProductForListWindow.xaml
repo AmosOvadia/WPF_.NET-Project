@@ -3,6 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
         Title="ProductForListWindow" Height="450" Width="800">
@@ -20,13 +22,13 @@
         <Grid Name="UpGrid" HorizontalAlignment="Stretch" Height="auto" Grid.Row="0"
 VerticalAlignment="Stretch" Width="auto">
             <Grid.Background>
-                <ImageBrush ImageSource="/Product/backround2.jpg"/>
+                <ImageBrush ImageSource="/backround2.jpg"/>
             </Grid.Background>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions >
-            <ComboBox x:Name="ProductCategory" Margin="0,15,154,377" Grid.Column="1" SelectionChanged="AttributeSelector_SelectionChanged" Text="ProductCategory" FontSize="14" >
+            <ComboBox x:Name="ProductCategory" Margin="0,15,154,377" Grid.Column="1" SelectionChanged="AttributeSelector_SelectionChanged" Text="ProductCategory" FontSize="14" SelectedIndex="3" >
                 <ComboBox.Background>
                     <LinearGradientBrush EndPoint="0,1">
                         <GradientStop Color="#FFF0F0F0"/>
@@ -39,7 +41,10 @@ VerticalAlignment="Stretch" Width="auto">
         </Grid>
 
 
-        <ListView x:Name="ProductListView" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="265,73,265,114" 
+        <ListView x:Name="ProductListView" 
+                  d:ItemsSource="{d:SampleData ItemCount=4}" 
+                  Margin="265,73,265,114" 
+                  ItemsSource = "{Binding productForList}"
                   SelectionChanged="ProductListView_SelectionChanged"
                   MouseDoubleClick="ProductListView_MouseDoubleClick">
             <ListView.View>

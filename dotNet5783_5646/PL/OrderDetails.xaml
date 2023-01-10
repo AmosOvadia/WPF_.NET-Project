@@ -1,0 +1,87 @@
+﻿<Window x:Class="PL.OrderDetails"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                DataContext="{Binding RelativeSource={RelativeSource Self}}"
+
+        xmlns:local="clr-namespace:PL"
+        mc:Ignorable="d"
+       Title="OrderDetails" Height="450" Width="800">
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="/backround2.jpg"/>
+        </Grid.Background>
+        <Button x:Name="Back" Content="Back" HorizontalAlignment="Left" Height="32" Margin="84,376,0,0" VerticalAlignment="Top" Width="63" Click="Back_Click" />
+        <Button x:Name="UpdateDelivery" Content="Update" HorizontalAlignment="Left" Margin="367,226,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.049,0.718" Width="59" Height="24" FontSize="15" FontWeight="Bold" Click="UpdateBottun_Click"/>
+
+        <Label Name="TextBoxLable" Content="Update Order:" HorizontalAlignment="Left" VerticalAlignment="Top" Height="37" Width="166" FontSize="20" FontWeight="Bold" Margin="286,0,0,0" RenderTransformOrigin="0.462,-2.636" FontFamily="Verdana" Foreground="#FFE4E4EC"/>
+
+        <Label Content="ID" HorizontalAlignment="Left" VerticalAlignment="Top" Height="37" Width="158" Margin="80,35,0,0" RenderTransformOrigin="0.462,-2.636" FontWeight="Bold" FontSize="16" FontFamily="Verdana" Foreground="#FFE4E4EC"/>
+        <TextBox Name="ID" HorizontalAlignment="Left" Margin="200,43,0,0" TextWrapping="Wrap" Text= "{Binding orderBinding.Id, Mode=TwoWay}" VerticalAlignment="Top" Width="160" TextChanged="ID_TextChanged" IsEnabled="False"/>
+
+        <Label Content="Name" HorizontalAlignment="Left" VerticalAlignment="Top" Height="37" Width="158" Margin="80,68,0,0" RenderTransformOrigin="0.462,-2.636" FontSize="16" FontFamily="Verdana" FontWeight="Bold" Foreground="#FFE4E4EC"/>
+        <TextBox Name="Name" HorizontalAlignment="Left" Margin="200,78,0,0" TextWrapping="Wrap" Text = "{Binding orderBinding.CustomerName, Mode=TwoWay}" VerticalAlignment="Top" Width="160" TextChanged="Name_TextChanged" IsEnabled="False"/>
+
+        <Label Content="Email" HorizontalAlignment="Left" VerticalAlignment="Top" Height="37" Width="158" Margin="80,105,0,0" RenderTransformOrigin="0.462,-2.636" FontSize="16" FontWeight="Bold" FontFamily="Verdana" Foreground="#FFE4E4EC"/>
+        <TextBox Name="Email" HorizontalAlignment="Left" Margin="200,106,0,0" TextWrapping="Wrap" Text = "{Binding orderBinding.CustomerEmail, Mode=TwoWay}" VerticalAlignment="Top" Width="160" TextChanged="Price_TextChanged" IsEnabled="False"/>
+
+        <Label Content="Order date" HorizontalAlignment="Left" VerticalAlignment="Top" Height="37" Width="158" Margin="80,140,0,0" RenderTransformOrigin="0.462,-2.636" FontSize="16" FontFamily="Verdana" FontWeight="Bold" Foreground="#FFE4E4EC" />
+        <TextBox Name ="OrderDate" HorizontalAlignment="Left" Text = "{Binding orderBinding.OrderDate, Mode=TwoWay}"  Margin="200,146,0,0" VerticalAlignment="Top" Width="160" RenderTransformOrigin="0.562,0.605"/>
+
+        <Label Content="Ship date" HorizontalAlignment="Left" VerticalAlignment="Top" Height="37" Width="158" Margin="80,181,0,0" RenderTransformOrigin="0.462,-2.636" FontSize="16" FontFamily="Verdana" FontWeight="Bold" Foreground="#FFE4E4EC" />
+        <TextBox Name ="ShipDate" HorizontalAlignment="Left" Text = "{Binding orderBinding.ShipDate, Mode=TwoWay}"  VerticalAlignment="Top" Width="160" Margin="200,188,0,0"/>
+
+        <Label Content="Delivery date" HorizontalAlignment="Left" VerticalAlignment="Top" Height="37" Width="158" Margin="60,224,0,0" RenderTransformOrigin="0.462,-2.636" FontSize="16" FontFamily="Verdana" FontWeight="Bold" Foreground="#FFE4E4EC" />
+        <TextBox Name ="DelivoryDate" HorizontalAlignment="Left" Text = "{Binding orderBinding.DeliveryDate, Mode=TwoWay}" Margin="200,230,0,0" VerticalAlignment="Top" Width="160"/>
+
+        <Label Content="Adress" HorizontalAlignment="Left" VerticalAlignment="Top" Height="37" Width="158" Margin="80,254,0,0" RenderTransformOrigin="0.462,-2.636" FontSize="16" FontFamily="Verdana" FontWeight="Bold" Foreground="#FFE4E4EC" />
+        <TextBox Name ="Adress" HorizontalAlignment="Left" Margin="200,264,0,0" Text = "{Binding orderBinding.CustomerAdress, Mode=TwoWay}" TextWrapping="Wrap" VerticalAlignment="Top" Width="160" Height="17" TextChanged="Adress_TextChanged" IsEnabled="False"/>
+
+        <Label Content="TotalPrice" HorizontalAlignment="Left" VerticalAlignment="Top" Height="37" Width="158" Margin="80,288,0,0" RenderTransformOrigin="0.462,-2.636" FontSize="16" FontFamily="Verdana" FontWeight="Bold" Foreground="#FFE4E4EC" />
+        <TextBox Name="TotalPrice" HorizontalAlignment="Left" Margin="200,298,0,0" TextWrapping="Wrap" Text="{Binding orderBinding.TotalPrice, Mode=TwoWay}" VerticalAlignment="Top" Width="160" TextChanged="Price_TextChanged" RenderTransformOrigin="0.499,0.871" IsEnabled="False"/>
+
+        <Label Content="Status" HorizontalAlignment="Left" VerticalAlignment="Top" Height="37" Width="158" Margin="80,318,0,0" RenderTransformOrigin="0.462,-2.636" FontFamily="Verdana" FontSize="16" FontWeight="Bold" Foreground="#FFE4E4EC"/>
+        <TextBox Name="Status" HorizontalAlignment="Left" Margin="200,328,0,0" TextWrapping="Wrap" Text="{Binding orderBinding.Status, Mode=TwoWay}" VerticalAlignment="Top" Width="160" TextChanged="Status_TextChanged" RenderTransformOrigin="0.485,0.501" IsEnabled="False"/>
+
+
+        <ListView x:Name="ListUpdateOrder" d:ItemsSource="{d:SampleData ItemCount=5}" 
+                  ItemsSource = "{Binding OrderItems}"
+                  HorizontalAlignment="Left" 
+                  Width="337" 
+                  Margin="437,0,0,118" 
+                  Height="248" 
+                  VerticalAlignment="Bottom" FontSize="10" SelectionChanged="ListUpdateOrder_SelectionChanged">
+            <ListView.View>
+                <GridView>
+
+                    <GridViewColumn  DisplayMemberBinding = "{Binding Path = Id}"
+                    Header = "ID"
+                    Width = "70" />
+
+                    <GridViewColumn
+                    DisplayMemberBinding = "{Binding Path = Name}"
+                    Header = "Name"
+                    Width = "80" />
+
+                    <GridViewColumn
+                    DisplayMemberBinding = "{Binding Path = Price}"
+                    Header = "Price"
+                    Width = "50" />
+
+                    <GridViewColumn
+                    DisplayMemberBinding = "{Binding Path = Amount}"
+                    Header = "Amount"
+                    Width = "50" />
+
+                    <GridViewColumn
+                    DisplayMemberBinding = "{Binding Path = TotalPrice}"
+                    Header = "Total Price"
+                    Width = "80" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Button x:Name="UpdateShip" Content="Update" HorizontalAlignment="Left" Height="26" Margin="368,186,0,0" VerticalAlignment="Top" Width="50" Click="UpdateShip_Click"/>
+
+    </Grid>
+</Window>

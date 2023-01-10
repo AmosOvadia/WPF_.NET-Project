@@ -83,7 +83,7 @@ internal class Program
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex);
+                                Console.WriteLine(ex.Message);
                             }
                             break;
                         case 2://print product
@@ -94,27 +94,23 @@ internal class Program
                             try
                             {
                                 printProduct = dal.Product.Get(getId);
+                                Console.WriteLine(printProduct);
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex);
+                                Console.WriteLine(ex.Message);
                             }
-                            Console.WriteLine(printProduct);
+                           
                             break;
 
                         case 3://print all prodocts
 
                             tempInt = 0; // counter
                             List<Product?> listProducts = new List<Product?>(dal.Product.GetList());
-                            foreach (Product product in listProducts)
-                            {
-                                if (tempInt == dal.Product.Leangth()) 
-                                {
-                                    break;
-                                }
-                                tempInt++;
-                                Console.WriteLine(product);
 
+                            foreach (Product product in listProducts)
+                            {                                
+                                Console.WriteLine(product);
                             }
                             break;
 
@@ -147,7 +143,7 @@ internal class Program
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex);
+                                Console.WriteLine(ex.Message);
                             }
                             break;
 
@@ -161,7 +157,7 @@ internal class Program
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex);
+                                Console.WriteLine(ex.Message);
                             }
                             break;
                     }
@@ -193,13 +189,13 @@ internal class Program
                             testAddOrder.Id = tempInt;
 
                             Console.Write("Enter order customer name: ");
-                            testAddOrder.CostomerName = Console.ReadLine();
+                            testAddOrder.CustomerName = Console.ReadLine();
 
                             Console.Write("Enter order customer email: ");
-                            testAddOrder.CostomerEmail = Console.ReadLine();
+                            testAddOrder.CustomerEmail = Console.ReadLine();
 
                             Console.Write("Enter order customer adress: ");
-                            testAddOrder.CostomerAdress = Console.ReadLine();
+                            testAddOrder.CustomerAdress = Console.ReadLine();
 
                             Console.Write("Enter Order date: ");
                             testAddOrder.OrderDate = Convert.ToDateTime(Console.ReadLine());
@@ -216,7 +212,7 @@ internal class Program
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex);
+                                Console.WriteLine(ex.Message);
                             }
                             break;
                         case 2://print
@@ -230,7 +226,7 @@ internal class Program
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex);
+                                Console.WriteLine(ex.Message);
                             }
                             Console.WriteLine(printOrder);
                             break;
@@ -259,13 +255,13 @@ internal class Program
                             testupdateOrder.Id = tempInt;
 
                             Console.Write("Enter customer name: ");
-                            testupdateOrder.CostomerName = Console.ReadLine();
+                            testupdateOrder.CustomerName = Console.ReadLine();
 
                             Console.Write("Enter order customer adress: ");
-                            testupdateOrder.CostomerAdress = Console.ReadLine();
+                            testupdateOrder.CustomerAdress = Console.ReadLine();
 
                             Console.Write("Enter customer email: ");
-                            testupdateOrder.CostomerEmail = Console.ReadLine();
+                            testupdateOrder.CustomerEmail = Console.ReadLine();
 
                             Console.Write("Enter Order date: ");
                             testupdateOrder.OrderDate = Convert.ToDateTime(Console.ReadLine());
@@ -281,7 +277,7 @@ internal class Program
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex);
+                                Console.WriteLine(ex.Message);
                             }
                             break;
                         case 5://delete
@@ -293,7 +289,7 @@ internal class Program
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex);
+                                Console.WriteLine(ex.Message);
                             }
                             break;
                     }
@@ -346,7 +342,7 @@ internal class Program
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex);
+                                Console.WriteLine(ex.Message);
                             }
                             break;
 
@@ -358,12 +354,13 @@ internal class Program
                             try
                             {
                                 printOrderItem = dal.OrderItem.Get(tempInt);
+                                Console.WriteLine(printOrderItem);
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex);
+                                Console.WriteLine(ex.Message);
                             }
-                            Console.WriteLine(printOrderItem);
+                            
                             break;
 
                         case 3://print OrderItem
@@ -413,7 +410,7 @@ internal class Program
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex);
+                                Console.WriteLine(ex.Message);
                             }
                             break;
 
@@ -426,7 +423,7 @@ internal class Program
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex);
+                                Console.WriteLine(ex.Message);
                             }
                             break;
                     }

@@ -14,5 +14,6 @@ public interface IProduct
     public void Delete(int Id);  //The function deletes a product to the logical layer
     public void Update(Product product); //The function updates the logical entity
 
+    public IEnumerable<BO.ProductItem?> GetProductItems(Func<DO.Product?, bool>? func = null);
 
 }

@@ -2,7 +2,6 @@
 
 using Dal;
 using DalApi;
-using DalList;
 using System.Runtime.CompilerServices;
 using System.Net.Mail;
 using System.Net.Http.Headers;
@@ -46,7 +45,7 @@ internal class Program
 
 
                 case 'c':                    
-                    access.Cart.MakeAnOrder(cart);
+                    access?.Cart.MakeAnOrder(cart);
                     break;
                 
                 case '0':
@@ -79,8 +78,8 @@ internal class Program
         switch (option)
         {
             case 'a':
-                List<BO.OrderForList> boOrderForLists = new List<BO.OrderForList>();
-                boOrderForLists = (List<BO.OrderForList>)access.Order.GetOrders();
+              //  List<BO.OrderForList> boOrderForLists = new List<BO.OrderForList>();
+                var  boOrderForLists = access.Order.GetOrders();
                 foreach (var boOrder in boOrderForLists)
                 {
                     Console.WriteLine(boOrder);
@@ -216,9 +215,9 @@ internal class Program
     {
         //The user is asked for his data to enter it in his shopping cart.
         Console.Write("Please enter your name: ");
-        cart.CostomerName = Console.ReadLine();
+        cart.CustomerName = Console.ReadLine();
         Console.WriteLine("\nPlease enter your address: ");
-        cart.CostomerAdress = Console.ReadLine();
+        cart.CustomerAdress = Console.ReadLine();
         
        
         EnterEmail();
@@ -327,8 +326,8 @@ internal class Program
         do
         {
             Console.WriteLine("\nPlease enter your email address: ");
-            cart.CostomerEmail = Console.ReadLine();
-        } while (!IsValid(cart.CostomerEmail)); //Check if the email address entered by the user is correct.
+            cart.CustomerEmail = Console.ReadLine();
+        } while (!IsValid(cart.CustomerEmail)); //Check if the email address entered by the user is correct.
     }
 
 

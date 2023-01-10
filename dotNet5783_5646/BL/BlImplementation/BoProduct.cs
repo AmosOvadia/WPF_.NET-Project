@@ -1,5 +1,10 @@
-﻿using BlApi;
+﻿
+
+
+using BlApi;
+using BO;
 using DalApi;
+using System.Security.Cryptography;
 using static BO.Enums;
 using static DO.Enums;
  
@@ -49,19 +54,18 @@ internal class BoProduct : BlApi.IProduct
         bool check = false; //If such a product does not exist
         List<DO.Product?> products = new List<DO.Product?>();
         products = (List<DO.Product?>)dal.Product.GetList();
-        foreach (DO.Product product in products) //Go through all the existing products in the data layer
+
+
+        //Go through all the existing products in the data layer
+        var c = (from p in products
+                     select p?.Id).Where(temp => temp == id);
+
+        if (c.Count() == 1)
         {
-            if (id == product.Id) //Is the product in the list the one we are looking for
-            {
-                dal.Product.Delete(id); //Delete the product in the data layer
-                check = true; //To know that we have found a member that we would like to delete
-                break;
-            }
+            dal.Product.Delete(id); //Delete the product in the data layer
         }
-        if (!check) //If such a product does not exist
-        {
-             throw new BO.TheIdDoesNotExistInTheDatabase("there is no ptoduct to delete");
-        }
+        else//If we did not delete = the member did not exist, we will throw an exception
+            throw new DO.TheIdentityCardDoesNotExistInTheDatabase("The product does not exist");
     }
 
 
@@ -72,7 +76,6 @@ internal class BoProduct : BlApi.IProduct
         BO.Product? BoProduct = new BO.Product();
         if (id > 0) //If the identity certificate is correct
         {
-
             DoProduct = dal.Product.Get(id);
             BoProduct.Id = DoProduct.Id;
             BoProduct.Name = DoProduct.Name;
@@ -101,14 +104,12 @@ internal class BoProduct : BlApi.IProduct
             productItem.Name = product.Name;
             productItem.Price = product.Price;
             productItem.Category = (BO.Enums.ProdactCategory)product.Category;
-            productItem.Amount = 0;
-            foreach (BO.OrderItem item in cart.Items) //Go through all items
-            {
-                if(id == item?.ProductId) //Is this the ID of the product we are looking for?
-                    productItem.Amount += item.Amount;//Add up the amount
-            }
-            return productItem;
 
+            productItem.Amount = 0;
+
+            //productItem.Amount = cart.Items.Where(item => id == item?.ProductId)
+            //    .Sum(item => item.Amount);
+            return productItem;
         }
         throw  new BO.TheVariableIsLessThanTheNumberZero("the id is less than 0");
     }
@@ -117,40 +118,116 @@ internal class BoProduct : BlApi.IProduct
     //The function returns all products
     public IEnumerable<BO.ProductForList?> GetProducts(Func<DO.Product?, bool>? func)
     {
-        List<BO.ProductForList?> productsForList = new List<BO.ProductForList?>();
-        List<DO.Product?> products = new List<DO.Product?>();
-        products = (List<DO.Product?>)dal.Product.GetList();
+        //List<BO.ProductForList?> productsForList = new List<BO.ProductForList?>();
+        // List<DO.Product?> products = new List<DO.Product?>();
+       var products = dal.Product.GetList();
         if (func != null)
         {
-            foreach (DO.Product product in products) //Go through all the products in the data layer
+            var productsForList = from item in products
+                    where func(item)
+                    select new ProductForList
+                    { Id = (int)(item?.Id)!, Category = (Enums.ProdactCategory?)(item?.Category), Name = item?.Name, Price = (double)(item?.Price)! };
+            return productsForList;
+        }
+        else
+        {
+           // var v = products.Select(p => (p?.Id, p?.Category, p?.Name, p?.Price));
+
+            var productsForList = from item in products
+                    select new ProductForList
+                    { Id = (int)(item?.Id)!, Category = (Enums.ProdactCategory?)(item?.Category), Name = item?.Name ,Price = (double)(item?.Price)! };
+            return productsForList;
+        }
+    }
+    public IEnumerable<BO.ProductItem?> GetProductItems(Func<DO.Product?, bool>? func)
+    {
+        //List<BO.ProductItem> productItems = new List<BO.ProductItem>();
+
+        //List<DO.Product> products = (List<DO.Product>)dal.Product.GetList();
+        //List<DO.OrderItem> orderItems = (List<DO.OrderItem>)dal.OrderItem.GetList();
+
+        //productItems = products.Select(item => new BO.ProductItem
+        //{
+        //    Id = (int)item.Id,
+        //    Category = (Enums.ProdactCategory)item.Category,
+        //    Name = item.Name,
+        //    Price = (double)item.Price,
+        //    InStock = (int)item.InStock,
+        //    Amount = orderItems.Where(temp => temp.ProductId == item.Id).Sum(temp => (int)temp.Amount)
+        //}).ToList();
+
+        //return (IEnumerable<BO.ProductItem?>)productItems;
+
+
+
+        List<BO.ProductItem?> productItems = new List<BO.ProductItem?>();
+
+        List<DO.Product?> products = (List<DO.Product?>)dal.Product.GetList();
+        List<DO.OrderItem?> orderItems = (List<DO.OrderItem?>)dal.OrderItem.GetList();
+
+        if (func == null)
+        {
+            foreach (var item in products)
             {
-                //add to the logical layer
-                if(func(product))
-                productsForList.Add(new BO.ProductForList
-                {
-                    Id = product.Id,
-                    Category = (BO.Enums.ProdactCategory)product.Category,
-                    Name = product.Name,
-                    Price = product.Price
-                });
+                BO.ProductItem? productItem = new ProductItem();
+                productItem.Id = (int)(item?.Id)!;
+                productItem.Category = (Enums.ProdactCategory?)(item?.Category);
+                productItem.Name = item?.Name;
+                productItem.Price = (double)(item?.Price)!;
+                productItem.InStock = ((int)item?.InStock!) > 0 ? true : false; 
+                productItem.Amount = 0;
+                //foreach (var temp in orderItems)
+                //{
+                //    if (temp?.ProductId == item?.Id)
+                //    {
+                //        productItem.Amount += (int)temp?.Amount!;
+                //    }
+                //}
+                productItems.Add(productItem);
             }
         }
         else
         {
-            foreach (DO.Product product in products) //Go through all the products in the data layer
+            foreach (var item in products)
             {
-                //add to the logical layer
-                productsForList.Add(new BO.ProductForList
+                if (func(item))
                 {
-                    Id = product.Id,
-                    Category = (BO.Enums.ProdactCategory?)product.Category,
-                    Name = product.Name,
-                    Price = product.Price
-                });
+                    BO.ProductItem? productItem = new ProductItem();
+                    productItem.Id = (int)(item?.Id)!;
+                    productItem.Category = (Enums.ProdactCategory?)(item?.Category);
+                    productItem.Name = item?.Name;
+                    productItem.Price = (double)(item?.Price)!;
+                    productItem.InStock = ((int)item?.InStock!) > 0 ? true : false;
+                    productItem.Amount = 0;
+                    foreach (var temp in orderItems)
+                    {
+                        if (temp?.ProductId == item?.Id)
+                        {
+                            productItem.Amount += (int)temp?.Amount!;
+                        }
+                    }
+                    productItems.Add(productItem);
+                }
             }
         }
-        return productsForList;
+        return productItems;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     //The function updates the logical entity
     public void Update(BO.Product product)
@@ -197,9 +274,6 @@ internal class BoProduct : BlApi.IProduct
         catch (BO.VariableIsNull ex)
         {
             Console.WriteLine(ex);
-        }
-    
+        }  
     }
-
-
 }

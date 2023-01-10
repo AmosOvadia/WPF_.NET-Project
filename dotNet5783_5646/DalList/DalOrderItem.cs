@@ -1,5 +1,4 @@
 ﻿using DalApi;
-using DO;
 using System.ComponentModel;
 using System.Diagnostics;
 
@@ -7,95 +6,76 @@ namespace Dal;
 using static Dal.DataSource;
 using DalApi;
 using System;
+using System.Security.Cryptography;
 
 internal class DalOrderItem : IOrderItem
-{
+{   
 
     //A function that adds an order item
-    public int Add(OrderItem ordItem)
+    public int Add(DO.OrderItem ordItem)
     {
-        foreach (OrderItem? temp in orderItemList)
+        var check = (from p in orderItemList
+                     select p?.Id).Where(temp => temp == ordItem.Id);
+
+
+        if (check.Count() == 0)
         {
-            if (temp?.Id == ordItem.Id)
-            {
-                throw new TheIDAlreadyExistsInTheDatabase("The order item already exist");
-            }
-        }
-        orderItemList.Add(ordItem);
-        return ordItem.Id;
+            DataSource.orderItemList.Add(ordItem); //We will add the new order item to the list
+            return ordItem.Id;
+        } //If it already exists we will throw an exception
+        throw new DO.TheIDAlreadyExistsInTheDatabase("The order item already exist");
     }
 
     //A function that deletes an order item
     public void Delete(int id)
     {
-        bool check = false;
-        foreach (OrderItem? temp in orderItemList)
+        var check = (from p in orderItemList
+                     select p?.Id).Where(temp => temp == id);
+        if (check.Count() == 1)
         {
-            if (temp?.Id == id)
-            {
-                check = true;
-                orderItemList.Remove(temp);
-            }
+            DataSource.orderItemList.Remove(orderItemList.FirstOrDefault(item => item?.Id == id)); //We will remove the order from the list
         }
-        if (!check)
-            throw new TheIdentityCardDoesNotExistInTheDatabase("The order item does not exist");
+        else//If we did not delete = the member did not exist, we will throw an exception
+            throw new DO.TheIdentityCardDoesNotExistInTheDatabase("The order item does not exist");
     }
 
+
+
     //A function that updates an order item
-    public void Update(OrderItem orderItem)
+    public void Update(DO.OrderItem orderItem)
     {
-        int index = 0;
-        bool check = false;
-        foreach (OrderItem? temp in orderItemList)
-        {
-            if (temp?.Id == orderItem.Id)
-            {
-                orderItemList[index] = orderItem;
-                check = true;
-            }
-            index++;
-        }
-        if (!check) //If we didn't find the organ
-            throw new TheIdentityCardDoesNotExistInTheDatabase("The order item does not exist");
+        var temp = orderItemList.FirstOrDefault(p => p?.Id == orderItem.Id);
+        int i = orderItemList.IndexOf(temp);
+        if (i != -1)
+            orderItemList[i] = orderItem;
+        else //If we didn't update any order = it didn't exist
+            throw new DO.TheIdentityCardDoesNotExistInTheDatabase("The order item does not exist");
     }
 
     //A function that returns order item by ID
-    public OrderItem Get(int id)
+    public DO.OrderItem Get(int id)
     {
-        foreach (OrderItem? temp in orderItemList)
-        {
-            if (temp?.Id == id)
-            { 
-                return (OrderItem)temp;  
-            }
-        }
-        throw new TheIdentityCardDoesNotExistInTheDatabase("The order item does not exist");
+        var orderItem = orderItemList.FirstOrDefault(p => p?.Id == id);
+        if (orderItem != null)
+            return (DO.OrderItem)orderItem;
+        //If the order item does not exist
+        throw new DO.TheIdentityCardDoesNotExistInTheDatabase("The order item does not exist");
     }
 
     //A function that returns a list of order Item
-    public IEnumerable<OrderItem?> GetList(Func<OrderItem?, bool>? func)
+    public IEnumerable<DO.OrderItem?> GetList(Func<DO.OrderItem?, bool>? func)
     {
         if (func == null)
-        {
-            List<OrderItem?> list = new List<OrderItem?>();
-            foreach (OrderItem? temp in orderItemList)
-            {
-                if (temp?.Id > 0) 
-                list.Add(temp);//
-            }
-            return list;
+        { 
+            return orderItemList;
         }
         else
         {
-            List<OrderItem> list = new List<OrderItem>();
-            foreach (OrderItem temp in orderItemList)
-            {
-                if(func(temp))
-                   list.Add(temp);
-            }
-            return (IEnumerable<OrderItem?>)list;
+            var list = orderItemList.Select(p => p).Where(temp => func(temp)).ToList();
+            return list;
         }
     }
+
 
     //A function that returns the length of the list
     public int Leangth()
@@ -104,20 +84,16 @@ internal class DalOrderItem : IOrderItem
     }
 
 
-  //A function that returns a order item according to a certain filter
-    OrderItem ICrud<OrderItem>.GetByDelegate(Func<OrderItem?, bool>? func)
+    //A function that returns a order item according to a certain filter
+    DO.OrderItem ICrud<DO.OrderItem>.GetByDelegate(Func<DO.OrderItem?, bool>? func)
     {
         if (func != null)
         {
-            foreach (OrderItem temp in orderItemList)
-            {
-                if (func(temp))
-                {
-                    return (OrderItem)temp;
-                }
-            }
+            var p = orderItemList.FirstOrDefault(p => func(p));
+            if (p != null)
+                return (DO.OrderItem)p;
         }
-        //If we did not find the order item that meets the filter requirements
-        throw new TheIdentityCardDoesNotExistInTheDatabase("The order item does not exist");
+        //If we did not find the order that meets the filter requirements
+        throw new DO.TheIdentityCardDoesNotExistInTheDatabase("The order item does not exist");
     }
 }

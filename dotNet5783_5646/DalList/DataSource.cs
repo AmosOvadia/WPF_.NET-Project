@@ -5,6 +5,7 @@ using static DO.Enums;
 using System.Transactions;
 using DalApi;
 using static Dal.DataSource;
+using System.Linq;
 
 namespace Dal;
 
@@ -94,9 +95,9 @@ internal static class DataSource
             Order temp = new Order();
 
             temp.Id = Config.GetIdOreder;
-            temp.CostomerName = costomerName[i];
-            temp.CostomerEmail = CostomerEmail[i];
-            temp.CostomerAdress = CostomerAdress[i];
+            temp.CustomerName = costomerName[i];
+            temp.CustomerEmail = CostomerEmail[i];
+            temp.CustomerAdress = CostomerAdress[i];
             DateTime time = DateTime.Now;
             temp.OrderDate = time.AddDays(-5).AddHours(6).AddMinutes(7);
             if (i < 16)  // 80%
@@ -118,21 +119,23 @@ internal static class DataSource
     private static void s_addOrderItem()
     {
         OrderItem temp = new OrderItem();
-        foreach (DO.Order item in orderList)      
+
+    //   Product? productTemp = 
+        orderList.SelectMany(item => productList.Take(4) , (item, productTemp) =>
         {
             int i = 0;
-            foreach (Product productTemp in productList)
-            {
-                i++;
-                temp.Id = Config.GetIdOrederItem;
-                temp.OrderId = item.Id;
-                temp.ProductId = productTemp.Id;
-                temp.Price = productTemp.Price;
-                temp.Amount = random.Next(1, 5);
-                orderItemList.Add(temp);
-                if (i == 4) break;
-            }
-        }
+            temp.Id = Config.GetIdOrederItem;
+            temp.OrderId = (int)item?.Id!;
+            temp.ProductId = (int)productTemp?.Id!;
+            temp.Price = (double)productTemp?.Price!;
+            temp.Amount = random.Next(1, 3);
+            orderItemList.Add(temp);
+            if (++i == 4) return false;
+            return true;
+        }).ToList();
+
+
+
     }
     private static void s_addProduct()
     {
@@ -150,7 +153,7 @@ internal static class DataSource
             temp.Name = name[i];
             temp.Price = prices[i];
             temp.Category = ProdactCategory.Shirts;
-            temp.InStock = random.Next(10, 50);
+            temp.InStock = random.Next(25, 50);
       //      Config.indexProduct++;
 
             productList.Add(temp);  
@@ -162,7 +165,7 @@ internal static class DataSource
             temp.Name = name[i];
             temp.Price = prices[i];
             temp.Category = ProdactCategory.Hats;
-            temp.InStock = random.Next(10, 50);
+            temp.InStock = random.Next(25, 50);
             //      Config.indexProduct++;
 
             productList.Add(temp);
@@ -174,7 +177,7 @@ internal static class DataSource
             temp.Name = name[i];
             temp.Price = prices[i];
             temp.Category = ProdactCategory.Shoes;
-            temp.InStock = random.Next(10, 50);
+            temp.InStock = random.Next(25, 50);
             //      Config.indexProduct++;
 
             productList.Add(temp);
