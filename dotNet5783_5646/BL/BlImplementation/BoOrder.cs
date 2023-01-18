@@ -17,10 +17,10 @@ internal class BoOrder : BlApi.IOrder
     public IEnumerable<BO.OrderForList?> GetOrders()
     {
        // List<BO.OrderForList?> orderForList = new List<BO.OrderForList?>(); 
-        List<DO.Order?> DoOrders = new List<DO.Order?>(); 
+        List<DO.Order?> DoOrders ; 
         List<DO.OrderItem?> DoOrderItems = new List<DO.OrderItem?>();
 
-        DoOrders = (List<DO.Order?>)dal.Order.GetList();
+        DoOrders = dal.Order.GetList().ToList();
         DoOrderItems = (List<DO.OrderItem?>)dal.OrderItem.GetList();
 
 
@@ -52,7 +52,7 @@ internal class BoOrder : BlApi.IOrder
             double finalTotalPrice = 0;
             DoOrder = dal.Order.Get(id);
             DoOrderItem = (List<DO.OrderItem?>)dal.OrderItem.GetList();
-            DoProducts = (List<DO.Product?>)dal.Product.GetList();
+            DoProducts = dal.Product.GetList().ToList();
 
             BoOrder.Id = DoOrder.Id;
             BoOrder.CustomerName = DoOrder.CustomerName;
@@ -108,8 +108,8 @@ internal class BoOrder : BlApi.IOrder
     public BO.OerderTracking Order_tracking(int id)
     {
         string Item;
-        List<DO.Order?> DoOrders = new List<DO.Order?>();
-        DoOrders = (List<DO.Order?>)dal.Order.GetList();
+        List<DO.Order?> DoOrders;
+        DoOrders = dal.Order.GetList().ToList();
         BO.OerderTracking BoOrderTracking = new BO.OerderTracking();
         bool check = false; //Does such an ID exist?
 
@@ -145,14 +145,14 @@ internal class BoOrder : BlApi.IOrder
     public BO.Order OrderShippingUpdate(int id)
     {
         List<BO.OrderItem?> boOrderItems = new List<BO.OrderItem?>();
-        List<DO.Product?> DoProducts = new List<DO.Product?>();
-        DoProducts = (List<DO.Product?>)dal.Product.GetList();
+        List<DO.Product?> DoProducts;
+        DoProducts = dal.Product.GetList().ToList();
         double finalTotalPrice = 0;
-        List<DO.OrderItem?> orderItems = new List<DO.OrderItem?>();
-        orderItems = (List<DO.OrderItem?>)dal.OrderItem.GetList();
+        List<DO.OrderItem?> orderItems;
+        orderItems = dal.OrderItem.GetList().ToList();
 
-        List<DO.Order?> DoOrders = new List<DO.Order?>();
-        DoOrders = (List<DO.Order?>)dal.Order.GetList();
+        List<DO.Order?> DoOrders;
+        DoOrders = (List<DO.Order?>)dal.Order.GetList().ToList();
 
         BO.Order BoOrder = new BO.Order();
         DO.Order temp = new DO.Order();
@@ -208,13 +208,13 @@ internal class BoOrder : BlApi.IOrder
     {
 
         List<BO.OrderItem?> boOrderItems = new List<BO.OrderItem?>();
-        List<DO.Product?> DoProducts = new List<DO.Product?>();
-        DoProducts = (List<DO.Product?>)dal.Product.GetList();
+        List<DO.Product?> DoProducts;
+        DoProducts = dal.Product.GetList().ToList();
         double finalTotalPrice = 0;
-        List<DO.OrderItem?> orderItems = new List<DO.OrderItem?>();
-        orderItems = (List<DO.OrderItem?>)dal.OrderItem.GetList();
-        List<DO.Order?> DoOrders = new List<DO.Order?>();
-        DoOrders = (List<DO.Order?>)dal.Order.GetList();
+        List<DO.OrderItem?> orderItems;
+        orderItems = dal.OrderItem.GetList().ToList();
+        List<DO.Order?> DoOrders ;
+        DoOrders = dal.Order.GetList().ToList();
         BO.Order BoOrder = new BO.Order();
         DO.Order temp = new DO.Order();
         bool check = false;
@@ -282,7 +282,7 @@ internal class BoOrder : BlApi.IOrder
 
 
         BO.Order ord = GetOrder(orderId);
-        List<DO.Product> products = new List<DO.Product>();
+        List<DO.Product> products ;
         products = (List<DO.Product>)dal.Product.GetList();
         DO.Product product = new DO.Product();
         BO.OrderItem order_item = new BO.OrderItem();

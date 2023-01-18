@@ -15,8 +15,15 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DalList", "DalList\DalList.csproj", "{9021E722-D1C5-43F4-BC77-6509140B06B1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DalTest", "DalTest\DalTest.csproj", "{2FA17F41-9794-4FFE-9363-419BD1B86305}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0BB67CC0-641E-4D1C-8E5D-18DF1341C29C} = {0BB67CC0-641E-4D1C-8E5D-18DF1341C29C}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BL", "BL\BL.csproj", "{403446C3-DD3D-430C-8F55-01F4D4D4A988}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0BB67CC0-641E-4D1C-8E5D-18DF1341C29C} = {0BB67CC0-641E-4D1C-8E5D-18DF1341C29C}
+		{2FA17F41-9794-4FFE-9363-419BD1B86305} = {2FA17F41-9794-4FFE-9363-419BD1B86305}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlTest", "BlTest\BlTest.csproj", "{BFA38A47-C075-48AD-B517-394B41900AAF}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -25,10 +32,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlTest", "BlTest\BlTest.csp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "xml", "xml", "{B4DD02DB-30A5-4624-8733-58AA1EB97BBD}"
 	ProjectSection(SolutionItems) = preProject
+		xml\Config.xml = xml\Config.xml
 		xml\dal-config.xml = xml\dal-config.xml
+		xml\Order.xml = xml\Order.xml
+		xml\OrderItem.xml = xml\OrderItem.xml
+		xml\Product.xml = xml\Product.xml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PL", "PL\PL.csproj", "{B804DF01-80F3-413B-AC01-40796AF09D00}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PL", "PL\PL.csproj", "{B804DF01-80F3-413B-AC01-40796AF09D00}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DalXml", "DalXml\DalXml.csproj", "{0BB67CC0-641E-4D1C-8E5D-18DF1341C29C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -64,6 +77,10 @@ Global
 		{B804DF01-80F3-413B-AC01-40796AF09D00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B804DF01-80F3-413B-AC01-40796AF09D00}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B804DF01-80F3-413B-AC01-40796AF09D00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BB67CC0-641E-4D1C-8E5D-18DF1341C29C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BB67CC0-641E-4D1C-8E5D-18DF1341C29C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BB67CC0-641E-4D1C-8E5D-18DF1341C29C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BB67CC0-641E-4D1C-8E5D-18DF1341C29C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

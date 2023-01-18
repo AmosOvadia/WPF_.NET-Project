@@ -43,7 +43,7 @@ VerticalAlignment="Stretch" Width="auto">
 
         <ListView x:Name="ProductListView" 
                   d:ItemsSource="{d:SampleData ItemCount=4}" 
-                  Margin="265,73,265,114" 
+                  Margin="265,75,265,112" 
                   ItemsSource = "{Binding productForList}"
                   SelectionChanged="ProductListView_SelectionChanged"
                   MouseDoubleClick="ProductListView_MouseDoubleClick">

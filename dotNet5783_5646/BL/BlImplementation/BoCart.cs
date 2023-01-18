@@ -16,8 +16,8 @@ internal class BoCart : BlApi.ICart
     //The function adds an item to the shopping cart
     public BO.Cart Add(BO.Cart cart, int id)
     {
-        List<DO.Product?> Do_Products = new List<DO.Product?>();
-        Do_Products = (List<DO.Product?>)dal!.Product.GetList();
+        List<DO.Product?> Do_Products ;
+        Do_Products = dal!.Product.GetList().ToList();
         var product = Do_Products.FirstOrDefault(p => p?.Id == id);
         int i = Do_Products.IndexOf(product);
         bool c = false;
@@ -210,8 +210,8 @@ internal class BoCart : BlApi.ICart
         {
             throw new BO.TheVariableIsLessThanTheNumberZero("There is no such thing as a negative quantity");
         }
-        List<DO.Product?> Do_Products = new List<DO.Product?>();
-        Do_Products = (List<DO.Product?>)dal.Product.GetList();
+        List<DO.Product?> Do_Products ;
+        Do_Products = dal.Product.GetList().ToList();
 
         BO.OrderItem? item = cart.Items.Where(x => x.ProductId == Id).FirstOrDefault();
         if (item != null)

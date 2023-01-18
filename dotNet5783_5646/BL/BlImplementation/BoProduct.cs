@@ -52,8 +52,8 @@ internal class BoProduct : BlApi.IProduct
     public void Delete(int id)
     {
         bool check = false; //If such a product does not exist
-        List<DO.Product?> products = new List<DO.Product?>();
-        products = (List<DO.Product?>)dal.Product.GetList();
+        List<DO.Product?> products;
+        products = dal.Product.GetList().ToList();
 
 
         //Go through all the existing products in the data layer
@@ -162,8 +162,8 @@ internal class BoProduct : BlApi.IProduct
 
         List<BO.ProductItem?> productItems = new List<BO.ProductItem?>();
 
-        List<DO.Product?> products = (List<DO.Product?>)dal.Product.GetList();
-        List<DO.OrderItem?> orderItems = (List<DO.OrderItem?>)dal.OrderItem.GetList();
+        List<DO.Product?> products = dal.Product.GetList().ToList();
+        List<DO.OrderItem?> orderItems = dal.OrderItem.GetList().ToList();
 
         if (func == null)
         {

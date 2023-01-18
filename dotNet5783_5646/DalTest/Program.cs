@@ -429,6 +429,17 @@ internal class Program
                     }
 
                     break;
+
+                case 4:
+                    XmlTools.SaveListToXMLSerializer(dal.Product.GetList().ToList(), "Product");
+                    XmlTools.SaveListToXMLSerializer(dal.Order.GetList().ToList(), "Order");
+                    XmlTools.SaveListToXMLSerializer(dal.OrderItem.GetList().ToList(), "OrderItem");
+
+                    int lastOrderItemID = dal.OrderItem.GetList().Last()?.Id ?? 0;
+                    int lastOrderID = dal.Order.GetList().Last()?.Id ?? 0;
+                    XmlTools.SaveConfigXElement("OrderId", lastOrderID);
+                    XmlTools.SaveConfigXElement("OrderItemId", lastOrderItemID);
+                    break;
             }
             Console.WriteLine("Enter 0 to end\n " +
                             "Enter 1 for product\n " +
