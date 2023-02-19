@@ -18,8 +18,30 @@
         <Label x:Name="LabelOrderId" Content="Order Id" HorizontalAlignment="Left" Margin="433,124,0,0" VerticalAlignment="Top"/>
         <Label x:Name="LabelPruductId" Content="Product Id" HorizontalAlignment="Left" Margin="434,158,0,0" VerticalAlignment="Top"/>
         <Label x:Name="LabelAmount" Content="Amount" HorizontalAlignment="Left" Margin="434,191,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="CheckPassword" Content="Check" HorizontalAlignment="Left" Margin="690,84,0,0" VerticalAlignment="Top" Click="CheckPassword_Click"/>
-        <Button x:Name="UpdateForManager1" Content="Update" HorizontalAlignment="Left" Margin="705,328,0,0" VerticalAlignment="Top" Click="UpdateForManager1_Click"/>
+        <Button x:Name="CheckPassword" Content="Check" HorizontalAlignment="Left" Margin="690,84,0,0" VerticalAlignment="Top" Click="CheckPassword_Click">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="Red"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+        </Button>
+        <Button x:Name="UpdateForManager1" Content="Update" HorizontalAlignment="Left" Margin="705,328,0,0" VerticalAlignment="Top" Click="UpdateForManager1_Click">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="Red"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+        </Button>
 
     </Grid>
 </Window>

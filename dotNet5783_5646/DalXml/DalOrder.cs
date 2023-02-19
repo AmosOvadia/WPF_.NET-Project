@@ -20,16 +20,18 @@ internal class DalOrder : IOrder
     /// The operation accepts an order and adds it in the array
     /// </summary>
     /// <returns> returns order id </returns>
+
+    //A function that adds an order
     public int Add(Order ord)
     {
         List<DO.Order?> ListOrder = XmlTools.LoadListFromXMLSerializer<DO.Order>(orderPath);
 
         if (ListOrder.FirstOrDefault(orderItem => orderItem?.Id == ord.Id) != null)
-            throw new Exception("id already exist");
+            throw new Exception("id already exist"); //If it already exists we will throw an exception
 
         ord.Id = int.Parse(config.Element("OrderId")!.Value) + 1;
         XmlTools.SaveConfigXElement("OrderId", ord.Id);
-        ListOrder.Add(ord);
+        ListOrder.Add(ord); //We will add the new order to the list
 
         XmlTools.SaveListToXMLSerializer(ListOrder, orderPath);
 
@@ -44,7 +46,7 @@ internal class DalOrder : IOrder
 
         if (ListOrder.Any(order => order?.Id == ordId))
             ListOrder.Remove(Get(ordId));
-        else
+        else //If we did not delete = the member did not exist, we will throw an exception
             throw new DO.TheIdentityCardDoesNotExistInTheDatabase("order does not exist");
         XmlTools.SaveListToXMLSerializer(ListOrder, orderPath);
     }
@@ -55,12 +57,14 @@ internal class DalOrder : IOrder
     {
         List<DO.Order?> ListOrder = XmlTools.LoadListFromXMLSerializer<DO.Order>(orderPath);
 
-        if (func == null)
+        if (func == null) // the full list
             return ListOrder.Select(lec => lec).OrderBy(lec => lec?.Id);
         else
             return ListOrder.Where(func).OrderBy(lec => lec?.Id);
     }
 
+
+    //A function that returns a order according to a certain filter
     public Order GetByDelegate(Func<Order?, bool>? func)
     {
         List<DO.Order?> ListOrder = XmlTools.LoadListFromXMLSerializer<DO.Order>(orderPath);
@@ -69,7 +73,8 @@ internal class DalOrder : IOrder
             var ord = ListOrder.FirstOrDefault(x => func(x));
             if (ord != null)
                 return (DO.Order)ord;
-        }
+        }      
+        //If we did not find the order that meets the filter requirements
         throw new DO.TheIdentityCardDoesNotExistInTheDatabase("No object is of the delegate");
     }
     /// <summary>
@@ -81,7 +86,7 @@ internal class DalOrder : IOrder
 
         var ord = ListOrder.FirstOrDefault(x => x?.Id == ordId);
 
-        if (ord == null)
+        if (ord == null)         //If the order does not exist
             throw new DO.TheIdentityCardDoesNotExistInTheDatabase("Order Id not found");
         else
             return (DO.Order)ord;
@@ -108,7 +113,7 @@ internal class DalOrder : IOrder
             int index = ListOrder.IndexOf(foundOrder);
             ListOrder[index] = order;
         }
-        if (found == false)
+        if (found == false) //If we didn't update any order = it didn't exist
             throw new DO.TheIdentityCardDoesNotExistInTheDatabase("Order Id not found");
         XmlTools.SaveListToXMLSerializer(ListOrder, orderPath);
 

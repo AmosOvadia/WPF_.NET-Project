@@ -1,6 +1,7 @@
 ﻿using BO;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,13 +24,20 @@ using System.Windows.Shapes;
         public partial class ProductForListWindow : Window
         {
             BlApi.IBl? bl = BlApi.Factory.Get();
-            public List<BO.ProductForList?> productForList = new List<ProductForList?> ();
+        public ObservableCollection<BO.ProductForList?> products
+        {
+            get { return (ObservableCollection<BO.ProductForList?>)GetValue(productsProperty); }
+            set { SetValue(productsProperty, value); }
+        }
+        public static readonly DependencyProperty productsProperty = DependencyProperty.Register(
+        "products", typeof(ObservableCollection<BO.ProductForList?>), typeof(ProductForListWindow), new PropertyMetadata(default(List<BO.ProductForList?>)));
 
-            public ProductForListWindow()
-            {
-                InitializeComponent();
+        public ProductForListWindow()
+        {
+            products = new ObservableCollection<BO.ProductForList?>(bl?.Product.GetProducts().ToList()!); // Take all the products from the logical layer and put them in the list
 
-                productForList = bl?.Product.GetProducts().ToList()!; // Take all the products from the logical layer and put them in the list
+            InitializeComponent();
+
             //Get the category types from the logical layer
             for (int i = 0; i < 3; i++)
             {
@@ -41,18 +49,17 @@ using System.Windows.Shapes;
 
             private void AttributeSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
             {
-                //ProductListView.ItemsSource = bl?.Product.GetProducts(a => a?.Category.ToString() == ProductCategory.SelectedItem.ToString());
-
-                if (ProductCategory.SelectedItem.ToString() != "All")
+            if (ProductCategory.SelectedItem.ToString() != "All")
                 {
-                    ProductListView.ItemsSource = bl?.Product.GetProductItems(a => a?.Category.ToString() == ProductCategory.SelectedItem.ToString());
-                }
+
+                products = new ObservableCollection<BO.ProductForList?>(bl?.Product.GetProducts().Where(a => a?.Category.ToString() == ProductCategory.SelectedItem.ToString()).ToList())!;//bl?.Product.GetProducts(a => a?.Category.ToString() == ProductCategory.SelectedItem.ToString());
+            }
                 else
                 {
-                    ProductListView.ItemsSource = bl?.Product.GetProductItems();
-                }
-
+                products = new ObservableCollection<BO.ProductForList?>(bl?.Product.GetProducts()!);
             }
+
+        }
 
         private void ProductListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
             {
@@ -64,20 +71,37 @@ using System.Windows.Shapes;
             private void Add_New_Product_Click(object sender, RoutedEventArgs e)
             {
                 int? temp = null;
-                new AddNewProduct(temp, false).Show();
-                Close(); //Close the product list window
+                new AddNewProduct(temp, false,addToProducts).Show();
+               // Close(); //Close the product list window
             }
 
 
             //to update the product
             private void ProductListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
             {
-                var product = (BO.ProductItem?)ProductListView.SelectedItem;
-                if ((BO.ProductItem?)ProductListView.SelectedItem != null)
+                if ((BO.ProductForList?)ProductListView.SelectedItem != null)
                 {
-                    new AddNewProduct(product.Id, false).Show();
-                    Close();// Close the product list window
+                var product = (BO.ProductForList?)ProductListView.SelectedItem;
+               
+                new AddNewProduct(product.Id, false,UpdateToProducts).Show();
+                   // Close();// Close the product list window
                 }
             }
+
+
+        private void UpdateToProducts(int productID)
+        {
+            var x = ProductListView.SelectedIndex;
+            products[x] = (bl?.Product.GetProducts(a => a?.Id == productID).First());
         }
+
+
+        private void addToProducts(int productID)
+        {
+            BO.ProductForList? p = (bl?.Product.GetProducts(a => a?.Id == productID)!).First();
+            products.Add(p);
+        }
+
+
     }
+}

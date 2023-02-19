@@ -1,6 +1,7 @@
 ﻿using PL;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,19 +23,26 @@ namespace PL
     {
         BlApi.IBl? bl = BlApi.Factory.Get();
 
-        public List<BO.OrderForList?> orderForList
+
+        public ObservableCollection<BO.OrderForList?> orderForList
         {
-            get { return (List<BO.OrderForList?>)GetValue(OrderListProperty); }
+            get { return (ObservableCollection<BO.OrderForList?>)GetValue(OrderListProperty); }
             set { SetValue(OrderListProperty, value); }
         }
+
+        //public List<BO.OrderForList?> orderForList
+        //{
+        //    get { return (List<BO.OrderForList?>)GetValue(OrderListProperty); }
+        //    set { SetValue(OrderListProperty, value); }
+        //}
         public static readonly DependencyProperty OrderListProperty = DependencyProperty.Register(
-        "orderForList", typeof(List<BO.OrderForList?>), typeof(OrderForList), new PropertyMetadata(default(List<BO.OrderForList?>)));
+        "orderForList", typeof(ObservableCollection<BO.OrderForList?>), typeof(OrderForList), new PropertyMetadata(default(ObservableCollection<BO.OrderForList?>)));
 
         public OrderForList()
         {
-            orderForList = new();
+            orderForList = new ObservableCollection<BO.OrderForList?>(bl?.Order.GetOrders()!); // Take all the products from the logical layer and put them in the list
             InitializeComponent();
-            orderForList = (List<BO.OrderForList?>)(bl?.Order.GetOrders())!; // Take all the products from the logical layer and put them in the list
+    
         }
 
         private void OrderForList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -53,13 +61,20 @@ namespace PL
         private void OrderForList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var orderForList = (BO.OrderForList)ListOfOrders.SelectedItem;
-            new OrderDetails(orderForList, bl.Order.Order_tracking(orderForList.Id),1).Show();
-            Close();// Close the product list window
+            new OrderDetails(orderForList, bl.Order.Order_tracking(orderForList.Id),1,UpdateToOrders).Show();
+          //  Close();// Close the product list window
 
         }
 
 
 
+
+
+        private void UpdateToOrders(int orderID)
+        {
+            var x = ListOfOrders.SelectedIndex;
+            orderForList[x] = (((bl?.Order.GetOrders(a => a?.Id == orderID).First())));
+        }
 
 
 

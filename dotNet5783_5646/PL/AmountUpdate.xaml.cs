@@ -1,6 +1,9 @@
 ﻿using BO;
+using DO;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +15,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using static System.Collections.Specialized.BitVector32;
 
 namespace PL
 {
@@ -22,12 +26,42 @@ namespace PL
     {
         BlApi.IBl? bl = BlApi.Factory.Get();
 
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private ObservableCollection<BO.OrderItem> _cartItems;
+        public ObservableCollection<BO.OrderItem> cartItems
+        {
+            get { return _cartItems; }
+            set
+            {
+                _cartItems = value;
+                OnPropertyChanged(nameof(cartItems));
+            }
+        }
+
+        private Action<Cart,int> Action;
+
+
+
+
+
+
+
+
+
+
         int ID;
         BO.Cart cart = new BO.Cart();
-        public AmountUpdate(Cart c,int id)
+        public AmountUpdate(Cart c,int id,Action<Cart,int> active)
         {
             
             InitializeComponent();
+            this.Action = active;
             ID = id;
             cart = c;
         }
@@ -52,11 +86,13 @@ namespace PL
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show(ex.Message, "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 Close();
+                Action?.Invoke(cart, ID);
+
             }
-           
+
         }
 
 

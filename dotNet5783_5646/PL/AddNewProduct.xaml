@@ -6,8 +6,14 @@
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
-       Title="AddNewProduct" Height="450" Width="800">
+       Title="AddNewProduct" Height="450" Width="800" Icon="/income.png">
+
+
+
     <Grid HorizontalAlignment="Stretch" Height="NaN" Margin="0,0,0,0" VerticalAlignment="Stretch" Width="NaN" RenderTransformOrigin="0.502,0.502">
+
+
+
         <Grid.Background>
             <ImageBrush ImageSource="/backround2.jpg"/>
         </Grid.Background>
@@ -17,7 +23,8 @@
         <Label Content="Price:" HorizontalAlignment="Left" Margin="219,202,0,0" VerticalAlignment="Top" FontFamily="Vladimir Script" FontSize="38" Foreground="#FF24BEB2" Height="46"/>
         <Label Content="In Stock:" HorizontalAlignment="Left" Margin="219,251,0,0" VerticalAlignment="Top" IsEnabled="False" FontFamily="Vladimir Script" FontSize="38" Foreground="#FF24BEB2" Height="46"/>
         <TextBox x:Name="PriceNewProduct" Text= "{Binding product.Price}" HorizontalAlignment="Left" Margin="376,224,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" Height="24" BorderBrush="#FF24BEB2"/>
-        <TextBox x:Name="NameNewProduct" Text= "{Binding product.Name}" HorizontalAlignment="Left" Margin="376,175,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" Height="24" BorderBrush="#FF24BEB2"/>
+        <TextBox x:Name="NameNewProduct" Text= "{Binding product.Name}" HorizontalAlignment="Left" Margin="376,175,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" Height="24" BorderBrush="#FF24BEB2"     Background= "{Binding ElementName
+=        NameNewProduct, Path=Text}"/>
         <TextBox x:Name="InStockNewProduct" HorizontalAlignment="Left" Margin="376,273,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" Height="24" BorderBrush="#FF24BEB2" TextChanged="InStockNewProduct_TextChanged" Text= "{Binding product.InStock}"/>
         <TextBox x:Name="IdNewProduct" HorizontalAlignment="Left" Margin="376,83,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" Height="24" TextChanged="IdNewProduct_TextChanged" BorderBrush="#FF24BEB2" Text= "{Binding product.Id}"/>
         <ComboBox x:Name="CategoryNewProduct" Text= "{Binding product.Category}" HorizontalAlignment="Left" Margin="376,129,0,0" VerticalAlignment="Top" Width="180" Height="24" BorderBrush="#FF24BEB2">
@@ -43,7 +50,20 @@
                     <GradientStop Color="#FF24BEB2" Offset="1"/>
                 </LinearGradientBrush>
             </Button.BorderBrush>
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="Red"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
         </Button>
+
+
+
         <Button x:Name="UpdateProduct" Content="Update" HorizontalAlignment="Left" Margin="689,380,0,0" VerticalAlignment="Top" Height="28" Width="74" Click="Update_Click" Background="White" FontFamily="Engravers MT" FontSize="12" Foreground="#FF1E1E1E">
             <Button.BorderBrush>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -51,14 +71,58 @@
                     <GradientStop Color="#FF24BEB2" Offset="1"/>
                 </LinearGradientBrush>
             </Button.BorderBrush>
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="Red"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+
+
 
         </Button>
-        <Button x:Name="BackToNewOrder" Content="Back" HorizontalAlignment="Left" Height="33" Margin="142,376,0,0" VerticalAlignment="Top" Width="58" Click="BackToNewOrder_Click" RenderTransformOrigin="-0.287,0.455"/>
+
+
+        <Line X1="300"
+ Y1="0"
+ X2="0"
+ Y2="0"
+ Stroke="Black"
+ StrokeThickness="4" Margin="245,300,10,10" />
 
 
 
 
+
+        <Button x:Name="BackToNewOrder" Content="Back" HorizontalAlignment="Left" Height="33" Margin="142,376,0,0" VerticalAlignment="Top" Width="58" Click="BackToNewOrder_Click" RenderTransformOrigin="-0.287,0.455">
+
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="Red"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+        </Button>
+
+
+
+
+        <Grid>
+            <Image Source="C:\Users\User\Downloads\life.png" Margin="70,276,653,94" />
+        </Grid>
 
 
     </Grid>
+
+
+
+
 </Window>

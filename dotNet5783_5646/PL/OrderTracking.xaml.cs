@@ -44,13 +44,14 @@ namespace PL
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             BO.OrderForList? order = new BO.OrderForList();
-            BO.OerderTracking? order1 = new BO.OerderTracking();
+            BO.OrderTracking? order1 = new BO.OrderTracking();
+            Action<int>? action = null;
 
             order1 = bl?.Order.Order_tracking((int)ID!);
 
             if (order1 != null)
             {
-                new OrderDetails(order, order1,0).Show();
+                new OrderDetails(order, order1,0, action).Show();
                 Close();
             }
         }

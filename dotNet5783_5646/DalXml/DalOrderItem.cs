@@ -24,12 +24,13 @@ internal class DalOrderItem : IOrderItem
     {
         List<DO.OrderItem?> listOrderItem = XmlTools.LoadListFromXMLSerializer<DO.OrderItem>(orderItemPath);
 
+        //If it already exists we will throw an exception
         if (listOrderItem.FirstOrDefault(orderItem => orderItem?.Id == ordItem.Id) != null)
             throw new DO.TheIDAlreadyExistsInTheDatabase("order item Id already exists");
 
         ordItem.Id = int.Parse(config.Element("OrderItemId")!.Value) + 1;
         XmlTools.SaveConfigXElement("OrderId", ordItem.Id);
-        listOrderItem.Add(ordItem);
+        listOrderItem.Add(ordItem);//We will add the new order item to the list
 
         XmlTools.SaveListToXMLSerializer(listOrderItem, orderItemPath);
 
@@ -43,8 +44,8 @@ internal class DalOrderItem : IOrderItem
         List<DO.OrderItem?> ListOrderItem = XmlTools.LoadListFromXMLSerializer<DO.OrderItem>(orderItemPath);
 
         if (ListOrderItem.Any(orderItem => orderItem?.Id == ordItemId))
-            ListOrderItem.Remove(Get(ordItemId));
-        else
+            ListOrderItem.Remove(Get(ordItemId)); //We will remove the order from the list
+        else//If we did not delete = the member did not exist, we will throw an exception
             throw new DO.TheIdentityCardDoesNotExistInTheDatabase("Order item not exist");
 
         XmlTools.SaveListToXMLSerializer(ListOrderItem, orderItemPath);
@@ -68,7 +69,7 @@ internal class DalOrderItem : IOrderItem
             var ordItem = ListOrderItem.FirstOrDefault(item => func(item));
             if (ordItem != null)
                 return (DO.OrderItem)ordItem;
-        }
+        } //If we did not find the order that meets the filter requirements
         throw new DO.TheIdentityCardDoesNotExistInTheDatabase("No object is of the delegate");
     }
     /// <summary>
@@ -79,7 +80,7 @@ internal class DalOrderItem : IOrderItem
         List<DO.OrderItem?> ListOrderItem = XmlTools.LoadListFromXMLSerializer<DO.OrderItem>(orderItemPath);
 
         var orderItem = ListOrderItem.FirstOrDefault(x => x?.Id == ordItemId);
-        if (orderItem == null)
+        if (orderItem == null)    //If the order item does not exist
             throw new DO.TheIdentityCardDoesNotExistInTheDatabase("order item id not found");
         else
             return (DO.OrderItem)orderItem;
@@ -108,7 +109,7 @@ internal class DalOrderItem : IOrderItem
             int index = ListOrderItem.IndexOf(foundOrderItem);
             ListOrderItem[index] = ordItem;
         }
-        if (found == false)
+        if (found == false)//If we didn't update any order = it didn't exist
             throw new DO.TheIdentityCardDoesNotExistInTheDatabase("order item id not found");
         XmlTools.SaveListToXMLSerializer(ListOrderItem, orderItemPath);
     }

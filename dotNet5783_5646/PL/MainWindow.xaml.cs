@@ -54,7 +54,7 @@ namespace PL
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show(ex.Message, "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -62,6 +62,12 @@ namespace PL
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
 
+        }
+
+        private void Simulator_Click(object sender, RoutedEventArgs e)
+        {
+            new MySimulatorWindow().Show();
+            Close();
         }
     }
 }

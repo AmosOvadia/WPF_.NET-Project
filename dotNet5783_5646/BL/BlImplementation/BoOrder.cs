@@ -14,7 +14,7 @@ internal class BoOrder : BlApi.IOrder
 {
     DalApi.IDal? dal = DalApi.Factory.Get();
     // The function returns a list of all orders
-    public IEnumerable<BO.OrderForList?> GetOrders()
+    public IEnumerable<BO.OrderForList?> GetOrders(Func<DO.Order?, bool>? filter )
     {
        // List<BO.OrderForList?> orderForList = new List<BO.OrderForList?>(); 
         List<DO.Order?> DoOrders ; 
@@ -24,17 +24,30 @@ internal class BoOrder : BlApi.IOrder
         DoOrderItems = (List<DO.OrderItem?>)dal.OrderItem.GetList();
 
 
-
-        var ordersForList = DoOrders.Select(doOrder => new BO.OrderForList
+        if (filter == null)
         {
-            Id = (int)(doOrder?.Id)!,
-            CostomerName = doOrder?.CustomerName,
-            Status = doOrder?.DeliveryDate != null ? OrderStatus.Delivered : doOrder?.ShipDate != null ? OrderStatus.Sent : OrderStatus.Confirmed,
-            TotalPrice = (double)DoOrderItems.Where(item => item?.OrderId == doOrder?.Id).Sum(item => item?.Price * (int)item?.Amount!)!,
-            AmountOfItems = DoOrderItems.Where(item => item?.OrderId == doOrder?.Id).Sum(item => (int)item?.Amount!)
-        }).ToList();
-        
-        return (List<BO.OrderForList?>)ordersForList!;
+            var ordersForList = DoOrders.Select(doOrder => new BO.OrderForList
+            {
+                Id = (int)(doOrder?.Id)!,
+                CostomerName = doOrder?.CustomerName,
+                Status = doOrder?.DeliveryDate != null ? OrderStatus.Delivered : doOrder?.ShipDate != null ? OrderStatus.Sent : OrderStatus.Confirmed,
+                TotalPrice = (double)DoOrderItems.Where(item => item?.OrderId == doOrder?.Id).Sum(item => item?.Price * (int)item?.Amount!)!,
+                AmountOfItems = DoOrderItems.Where(item => item?.OrderId == doOrder?.Id).Sum(item => (int)item?.Amount!)
+            }).ToList();
+            return ordersForList!;
+        }
+        else
+        {
+            var ordersForList = DoOrders.Where(o => filter(o) == true).Select(doOrder => new BO.OrderForList
+            {
+                Id = (int)(doOrder?.Id)!,
+                CostomerName = doOrder?.CustomerName,
+                Status = doOrder?.DeliveryDate != null ? OrderStatus.Delivered : doOrder?.ShipDate != null ? OrderStatus.Sent : OrderStatus.Confirmed,
+                TotalPrice = (double)DoOrderItems.Where(item => item?.OrderId == doOrder?.Id).Sum(item => item?.Price * (int)item?.Amount!)!,
+                AmountOfItems = DoOrderItems.Where(item => item?.OrderId == doOrder?.Id).Sum(item => (int)item?.Amount!)
+            }).ToList();
+            return ordersForList!;
+        }
     }
 
 
@@ -105,17 +118,17 @@ internal class BoOrder : BlApi.IOrder
 
 
     // The function returns the tracking of the order
-    public BO.OerderTracking Order_tracking(int id)
+    public BO.OrderTracking Order_tracking(int id)
     {
         string Item;
         List<DO.Order?> DoOrders;
         DoOrders = dal.Order.GetList().ToList();
-        BO.OerderTracking BoOrderTracking = new BO.OerderTracking();
+        BO.OrderTracking BoOrderTracking = new BO.OrderTracking();
         bool check = false; //Does such an ID exist?
 
 
         var query = DoOrders.Where(x => x?.Id == id)
-          .Select(x => new BO.OerderTracking
+          .Select(x => new BO.OrderTracking
           {
               Id = (int)(x?.Id)!,
               Status = (x?.DeliveryDate != null && x?.DeliveryDate <= DateTime.Now) ? OrderStatus.Delivered :
@@ -336,10 +349,37 @@ internal class BoOrder : BlApi.IOrder
         }
         ord.Items = order_items;
     }
-        
+    public int? PriorityOrder(Func<DO.Order?, bool>? filter = null)
+    {
+        DO.Order order = new DO.Order();
+
+        if (filter != null)
+        {
+            order = dal.Order.GetByDelegate(filter);
+        }
+        else
+        {
+            DO.Order? OrderOrderDate = dal?.Order.GetList(x => x?.ShipDate == null).MinBy(x => x?.OrderDate);
+            DO.Order? OrderShipDate = dal?.Order.GetList(x => x?.DeliveryDate == null).MinBy(x => x?.ShipDate);
+
+            if (OrderOrderDate != null && OrderOrderDate?.OrderDate < OrderShipDate?.ShipDate)
+            {
+                return OrderOrderDate?.Id;
+            }
+            else if (OrderShipDate != null)
+            {
+                return OrderShipDate?.Id;
+            }
+
+            return null;
+        }
 
 
+        return order.Id;
     }
+
+
+}
 
 
 

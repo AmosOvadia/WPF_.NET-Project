@@ -5,11 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
-        Title="AmountUpdate" Height="250" Width="300" >
+        Title="AmountUpdate" Height="250" Width="300" Icon="/income.png" >
     <Grid>
         <Grid.Background>
             <ImageBrush ImageSource="/backround2.jpg"/>
         </Grid.Background>
+
+
+        <Line X1="80"
+ Y1="90"
+ X2="0"
+ Y2="90"
+ Stroke="Black"
+ StrokeThickness="4" Margin="101,57,-101,-57" />
+
+
+
+
         <TextBox x:Name="TextBox" KeyDown="TextBox_KeyDown" Text="" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="41" Height="18" FontSize="12" FontWeight="Bold" FontFamily="Verdana" TextChanged="TextBox_TextChanged" BorderBrush="#FF1039B6" Margin="122,162,0,0"/>
         <Label Content="Enter Amount" HorizontalAlignment="Left" Height="27" Margin="97,121,0,0" VerticalAlignment="Top" Width="86"/>
     </Grid>

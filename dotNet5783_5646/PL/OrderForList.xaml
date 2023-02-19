@@ -6,7 +6,7 @@
                 DataContext="{Binding RelativeSource={RelativeSource Self}}"
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
-        Title="OrderForList" Height="450" Width="800">
+        Title="OrderForList" Height="450" Width="800" Icon="/income.png">
     <Grid>
         <Grid.Background>
             <ImageBrush ImageSource="/backround2.jpg"/>
@@ -52,7 +52,18 @@
             </ListView.View>
 
         </ListView>
-        <Button x:Name="Back" Content="Back" HorizontalAlignment="Left" Height="30" Margin="168,379,0,0" VerticalAlignment="Top" Width="70" Click="Back_Click"/>
+        <Button x:Name="Back" Content="Back" HorizontalAlignment="Left" Height="30" Margin="168,379,0,0" VerticalAlignment="Top" Width="70" Click="Back_Click">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="Red"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+        </Button>
 
     </Grid>
 </Window>

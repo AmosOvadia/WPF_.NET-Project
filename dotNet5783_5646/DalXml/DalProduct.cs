@@ -2,6 +2,7 @@
 using DO;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,58 +14,62 @@ internal class DalProduct : IProduct
 {
     string productPath = @"Product";
     static XElement config = XmlTools.LoadConfig();
-    static DO.Product? createProductfromXElement(XElement s)
+    static DO.Product? createProductfromXElement(XElement product)
     {
         return new DO.Product
         {
-            Id = s.ToIntNullable("Id") ?? throw new FormatException("Id"),
-            Name = (string?)s.Element("Name")!.Value,
-            Category = s.ToEnumNullable<DO.Enums.ProdactCategory>("Category"),
-            Price = (double)s.Element("Price")!,
-            InStock = (int)s.Element("InStock")!
+            Id = product.ToIntNullable("Id") ?? throw new FormatException("Id"),
+            Name = (string?)product.Element("Name")!.Value,
+            Category = product.ToEnumNullable<DO.Enums.ProdactCategory>("Category"),
+            Price = (double)product.Element("Price")!,
+            InStock = (int)product.Element("InStock")!
         };
     }
+
+    //Function to add a product
     public int Add(Product product)
     {
         XElement product_root = XmlTools.LoadListFromXMLElement(productPath);
-        if (product.Id == 0)
-        {
-            product.Id = int.Parse(config.Element("Id")!.Value) + 1;
-            XmlTools.SaveConfigXElement("Id", product.Id);
-        }
+        //if (product.Id == 0)
+        //{
+        //    product.Id = int.Parse(config.Element("Id")!.Value) + 1;
+        //    XmlTools.SaveConfigXElement("Id", product.Id);
+        //}
         XElement? prod = (from st in product_root.Elements()
-                          where st.ToIntNullable("ProductID") == product.Id
+                          where st.ToIntNullable("Id") == product.Id
                           select st).FirstOrDefault();
-        if (prod != null)
-            throw new Exception("ID already exist");
+        if (prod != null) //If it already exists we will throw an exception
+            throw new DO.TheIDAlreadyExistsInTheDatabase("ID already exist");
         product_root.Add(new XElement("Product",
                                    new XElement("Id", product.Id),
                                    new XElement("Name", product.Name),
                                    new XElement("Category", product.Category),
                                    new XElement("Price", product.Price),
                                    new XElement("InStock", product.InStock)
-                                   ));
+                                   ));   //We will add the new product to the list
         XmlTools.SaveListToXMLElement(product_root, productPath);
         return product.Id;
     }
 
+    //Function to delete a product
     public void Delete(int prodId)
     {
         XElement product_root = XmlTools.LoadListFromXMLElement(productPath);
 
         XElement? prod = (from st in product_root.Elements()
                           where (int?)st.Element("Id") == prodId
-                          select st).FirstOrDefault() ?? throw new Exception("Missing ID");
+                          select st).FirstOrDefault() ?? throw new Exception("Missing ID"); // If we did not delete = the member did not exist, we will throw an exception
         prod.Remove();  //<==> Remove stud from studentsRootElem
 
         XmlTools.SaveListToXMLElement(product_root, productPath);
 
     }
 
+   //A function that returns a list of all products
     public IEnumerable<Product?> GetList(Func<Product?, bool>? func = null)
     {
         XElement? product_root = XmlTools.LoadListFromXMLElement(productPath);
-        if (func != null)
+        if (func != null) //Should I return everything?
         {
             return from s in product_root.Elements()
                    let prod = createProductfromXElement(s)
@@ -78,6 +83,7 @@ internal class DalProduct : IProduct
         }
     }
 
+    //A function that returns a product according to a certain filter
     public Product GetByDelegate(Func<Product?, bool>? func)
     {
         if (func == null)
@@ -89,37 +95,40 @@ internal class DalProduct : IProduct
                  select p.ConvertProduct_Xml_to_D0()).FirstOrDefault());
     }
 
+    // A function that returns a product according to the ID
     public Product Get(int productId)
     {
         List<DO.Product?> ListProduct = XmlTools.LoadListFromXMLSerializer<DO.Product>(productPath);
 
         var product = ListProduct.FirstOrDefault(x => x?.Id == productId);
 
-        if (product == null)
+        if (product == null)  //If the product does not exist
             throw new DO.TheIdentityCardDoesNotExistInTheDatabase("Product Id not found");
         else
             return (DO.Product)product;
     }
 
+    //A helper function that returns the size of the list
     public int Leangth()
     {
         List<DO.Product?> ListProduct = XmlTools.LoadListFromXMLSerializer<DO.Product>(productPath);
         return ListProduct.Count;
     }
 
+
+    // A function that updates a product
     public void Update(Product product)
     {
+        //Get the list of products
         List<DO.Product?> ListProduct = XmlTools.LoadListFromXMLSerializer<DO.Product>(productPath);
-
-        bool found = false;
+  
         var foundProduct = ListProduct.FirstOrDefault(prod => prod?.Id == product.Id);
-        if (foundProduct != null)
+        if (foundProduct != null) // Check if the product even exists
         {
-            found = true;
             int index = ListProduct.IndexOf(foundProduct);
             ListProduct[index] = product;
         }
-        if (found == false)
+        else//If we didn't update any product = it didn't exist
             throw new DO.TheIdentityCardDoesNotExistInTheDatabase("order item id not found");
         XmlTools.SaveListToXMLSerializer(ListProduct, productPath);
     }

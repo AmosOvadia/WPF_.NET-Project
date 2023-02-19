@@ -44,7 +44,14 @@ internal class BoProduct : BlApi.IProduct
         Do_Product.Price = product.Price;
         Do_Product.Category = (DO.Enums.ProdactCategory?)product.Category;
         Do_Product.InStock = product.InStock;
-        dal.Product.Add(Do_Product); //Add the product in the data layer
+        try
+        {
+            dal.Product.Add(Do_Product); //Add the product in the data layer
+        }
+        catch (DO.TheIDAlreadyExistsInTheDatabase)
+        {
+            throw new BO.TheIDAlreadyExistsInTheDatabase("The ID Already Exists");
+        }      
     }
 
 

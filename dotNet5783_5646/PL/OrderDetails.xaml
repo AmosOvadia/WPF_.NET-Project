@@ -7,18 +7,60 @@
 
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
-       Title="OrderDetails" Height="450" Width="800">
+       Title="OrderDetails" Height="450" Width="800" Icon="/income.png">
     <Grid>
         <Grid.Background>
             <ImageBrush ImageSource="/backround2.jpg"/>
         </Grid.Background>
-        <Button x:Name="Back" Content="Back" HorizontalAlignment="Left" Height="32" Margin="84,376,0,0" VerticalAlignment="Top" Width="63" Click="Back_Click" />
-        <Button x:Name="UpdateDelivery" Content="Update" HorizontalAlignment="Left" Margin="367,226,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.049,0.718" Width="59" Height="24" FontSize="15" FontWeight="Bold" Click="UpdateBottun_Click"/>
+
+
+        <Button x:Name="Back" Content="Back" HorizontalAlignment="Left" Height="32" Margin="84,376,0,0" VerticalAlignment="Top" Width="63" Click="Back_Click" >
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="Red"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+        </Button>
+     
+        <Button x:Name="UpdateDelivery" Content="Update" HorizontalAlignment="Left" Margin="367,226,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.049,0.718" Width="59" Height="24" FontSize="15" FontWeight="Bold" Click="UpdateBottun_Click">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="Red"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+        </Button>
 
         <Label Name="TextBoxLable" Content="Update Order:" HorizontalAlignment="Left" VerticalAlignment="Top" Height="37" Width="166" FontSize="20" FontWeight="Bold" Margin="286,0,0,0" RenderTransformOrigin="0.462,-2.636" FontFamily="Verdana" Foreground="#FFE4E4EC"/>
 
         <Label Content="ID" HorizontalAlignment="Left" VerticalAlignment="Top" Height="37" Width="158" Margin="80,35,0,0" RenderTransformOrigin="0.462,-2.636" FontWeight="Bold" FontSize="16" FontFamily="Verdana" Foreground="#FFE4E4EC"/>
-        <TextBox Name="ID" HorizontalAlignment="Left" Margin="200,43,0,0" TextWrapping="Wrap" Text= "{Binding orderBinding.Id, Mode=TwoWay}" VerticalAlignment="Top" Width="160" TextChanged="ID_TextChanged" IsEnabled="False"/>
+        <TextBox Name="ID" HorizontalAlignment="Left" Margin="200,43,0,0" TextWrapping="Wrap" Text= "{Binding orderBinding.Id, Mode=TwoWay}" VerticalAlignment="Top" Width="160" TextChanged="ID_TextChanged" IsEnabled="False" >
+                 
+                 <!--<TextBox x:Name="textBox1" Text="{Binding TextValue}">-->
+            <TextBox.Style>
+                <Style TargetType="TextBox">
+                    <Setter Property="Background" Value="White"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsValid}" Value="True">
+                            <Setter Property="Background" Value="Green"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsValid}" Value="False">
+                            <Setter Property="Background" Value="Red"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBox.Style>
+          </TextBox>
+
 
         <Label Content="Name" HorizontalAlignment="Left" VerticalAlignment="Top" Height="37" Width="158" Margin="80,68,0,0" RenderTransformOrigin="0.462,-2.636" FontSize="16" FontFamily="Verdana" FontWeight="Bold" Foreground="#FFE4E4EC"/>
         <TextBox Name="Name" HorizontalAlignment="Left" Margin="200,78,0,0" TextWrapping="Wrap" Text = "{Binding orderBinding.CustomerName, Mode=TwoWay}" VerticalAlignment="Top" Width="160" TextChanged="Name_TextChanged" IsEnabled="False"/>
@@ -81,7 +123,18 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button x:Name="UpdateShip" Content="Update" HorizontalAlignment="Left" Height="26" Margin="368,186,0,0" VerticalAlignment="Top" Width="50" Click="UpdateShip_Click"/>
+        <Button x:Name="UpdateShip" Content="Update" HorizontalAlignment="Left" Height="26" Margin="368,186,0,0" VerticalAlignment="Top" Width="50" Click="UpdateShip_Click">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="Red"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+        </Button>
 
     </Grid>
 </Window>

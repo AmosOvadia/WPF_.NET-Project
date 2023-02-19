@@ -5,36 +5,164 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
        xmlns:local="clr-namespace:PL"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+             d:DesignHeight="450" d:DesignWidth="800" Icon="/income.png" ResizeMode="CanResizeWithGrip">
+            <Window.Resources>
+                <LinearGradientBrush x:Key="myLinearGradientBrush">
+                    <GradientStop Color="Blue"
+        Offset="0" />
+                    <GradientStop Color="Yellow"
+        Offset="0.5" />
+                    <GradientStop Color="Red"
+        Offset="1" />
+                </LinearGradientBrush>
+            </Window.Resources>
+            <Grid>
+
+
+
+        <!--<DoubleAnimation Storyboard.TargetProperty="Offset"
+                 From="0" To="1" Duration="00:00:5" 
+                 RepeatBehavior="Forever" AutoReverse="True"/>-->
+
         <Grid.Background>
             <ImageBrush ImageSource="/backround.jpg"/>
         </Grid.Background>
-        <Button x:Name="Admin" Content="Admin" HorizontalAlignment="Left" Margin="352,376,0,0" VerticalAlignment="Top" Height="38" Width="120" Click="Admin_Click" BorderBrush="{x:Null}" RenderTransformOrigin="0.511,-0.499">
-            <Button.Background>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+        <Button x:Name="Admin" Content="Admin" HorizontalAlignment="Left" Margin="352,376,0,0" VerticalAlignment="Top" Height="38" Width="120" Click="Admin_Click" BorderBrush="{x:Null}" RenderTransformOrigin="0.511,-0.499"  Background="{StaticResource myLinearGradientBrush}">
+
+      
+          
+
+
+
+            <!--<Button.Background>
+                
+                
+           
+                    <LinearGradientBrush>
+                        <GradientStop Color="Blue" Offset="0" />
+                        <GradientStop Color="Yellow" Offset="0.5" />
+                        <GradientStop Color="Red" Offset="1" />
+                    </LinearGradientBrush>
+              
+                --><!--<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="Black"/>
                     <GradientStop Color="White" Offset="1"/>
-                </LinearGradientBrush>
-            </Button.Background>
+                </LinearGradientBrush>-->
+            <!--</Button.Background>-->
+
+
+            
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="Red"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+
+
+
         </Button>
-        <Button x:Name="NewOrder" Content="New Order" HorizontalAlignment="Left" Margin="350,323,0,0" VerticalAlignment="Top" Height="38" Width="120" Click="NewOrder_Click" BorderBrush="{x:Null}">
-            <Button.Background>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="Black"/>
-                    <GradientStop Color="White" Offset="1"/>
-                </LinearGradientBrush>
-            </Button.Background>
+
+
+
+
+
+
+
+
+        <Button x:Name="NewOrder" Content="New Order" HorizontalAlignment="Left" Margin="350,323,0,0" VerticalAlignment="Top" Height="38" Width="120" Click="NewOrder_Click" BorderBrush="{x:Null}"   Background="{StaticResource myLinearGradientBrush}">
+          
+
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="Red"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+
+
+       
+
+
+
+
         </Button>
-        <Button x:Name="OrderForMangar" Content="Order For Mangar" HorizontalAlignment="Left" Margin="350,271,0,0" VerticalAlignment="Top" Height="38" Width="120" Click="OrderForMangar_Click" Foreground="#FF141313">
-            <Button.Background>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="Black"/>
-                    <GradientStop Color="White" Offset="1"/>
-                </LinearGradientBrush>
-            </Button.Background>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <Button x:Name="OrderForMangar" Content="Order For Mangar" HorizontalAlignment="Left" Margin="350,271,0,0" VerticalAlignment="Top" Height="38" Width="120" Click="OrderForMangar_Click" Foreground="#FF141313"  Background="{StaticResource myLinearGradientBrush}">
+
+
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="Red"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
         </Button>
-        <TextBox x:Name="TextBox" KeyDown="TextBox_KeyDown" Text="" HorizontalAlignment="Left" Margin="26,262,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" Height="20" FontSize="22" FontWeight="Bold" FontFamily="Verdana" TextChanged="TextBox_TextChanged"/>
+    
+    
+    
+    
+        <TextBox x:Name="TextBox" KeyDown="TextBox_KeyDown" Text="" HorizontalAlignment="Left" Margin="26,262,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="130" Height="20" FontSize="22" FontWeight="Bold" FontFamily="Verdana" TextChanged="TextBox_TextChanged"
+                 />
         <Label Content="Order Id:" HorizontalAlignment="Left" Height="36" Margin="60,236,0,0" VerticalAlignment="Top" Width="147" Foreground="#FFE8E1E1"/>
+        <Button x:Name="Simulator" Content="Simulator" HorizontalAlignment="Left" Height="70" Margin="583,240,0,0" VerticalAlignment="Top" Width="144" Click="Simulator_Click">
+
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="Red"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+            <Button.Triggers>
+            <EventTrigger RoutedEvent="Button.Loaded">
+                <BeginStoryboard>
+                        <Storyboard RepeatBehavior="Forever">
+                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)">
+                                <LinearColorKeyFrame Value="Blue" KeyTime="0:0:0"/>
+                                <LinearColorKeyFrame Value="Red" KeyTime="0:0:0.5"/>
+                                <LinearColorKeyFrame Value="Green" KeyTime="0:0:1"/>
+                                <LinearColorKeyFrame Value="Yellow" KeyTime="0:0:1.5"/>
+                                <LinearColorKeyFrame Value="Blue" KeyTime="0:0:2"/>
+                            </ColorAnimationUsingKeyFrames>
+                        </Storyboard>
+
+
+                    </BeginStoryboard>
+            </EventTrigger>
+        </Button.Triggers>
+
+        </Button>
+
     </Grid>
 </Window>

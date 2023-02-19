@@ -43,6 +43,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PL", "PL\PL.csproj", "{B804
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DalXml", "DalXml\DalXml.csproj", "{0BB67CC0-641E-4D1C-8E5D-18DF1341C29C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simulator", "Simulator\Simulator.csproj", "{B3259042-9E60-462C-B996-758E8B3857DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{0BB67CC0-641E-4D1C-8E5D-18DF1341C29C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0BB67CC0-641E-4D1C-8E5D-18DF1341C29C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0BB67CC0-641E-4D1C-8E5D-18DF1341C29C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3259042-9E60-462C-B996-758E8B3857DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3259042-9E60-462C-B996-758E8B3857DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3259042-9E60-462C-B996-758E8B3857DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3259042-9E60-462C-B996-758E8B3857DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -3,11 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+                DataContext="{Binding RelativeSource={RelativeSource Self}}"
 
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
-        Title="ProductForListWindow" Height="450" Width="800">
+        Title="ProductForListWindow" Height="450" Width="800" Icon="/income.png">
     <Grid>
 
         <Grid Name="MainGrid">
@@ -28,7 +28,7 @@ VerticalAlignment="Stretch" Width="auto">
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions >
-            <ComboBox x:Name="ProductCategory" Margin="0,15,154,377" Grid.Column="1" SelectionChanged="AttributeSelector_SelectionChanged" Text="ProductCategory" FontSize="14" SelectedIndex="3" >
+            <ComboBox x:Name="ProductCategory" Margin="0,15,154,377" Grid.Column="1" SelectionChanged="AttributeSelector_SelectionChanged" Text="ProductCategory" FontSize="14" >
                 <ComboBox.Background>
                     <LinearGradientBrush EndPoint="0,1">
                         <GradientStop Color="#FFF0F0F0"/>
@@ -37,16 +37,29 @@ VerticalAlignment="Stretch" Width="auto">
                 </ComboBox.Background>
             </ComboBox>
             <Label Content="Selection of categories:" HorizontalAlignment="Left" Margin="154,15,0,0" VerticalAlignment="Top" Grid.Column="0" RenderTransformOrigin="-0.267,-0.345" FontFamily="Engravers MT"/>
-            <Button x:Name="Add_New_Product" Grid.Column="1" Content="Add New Product" HorizontalAlignment="Left" Margin="209,375,0,0" VerticalAlignment="Top" Width="165" Height="33" Click="Add_New_Product_Click" FontFamily="Engravers MT" Background="{x:Null}" />
+            <Button x:Name="Add_New_Product" Grid.Column="1" Content="Add New Product" HorizontalAlignment="Left" Margin="209,375,0,0" VerticalAlignment="Top" Width="165" Height="33" Click="Add_New_Product_Click" FontFamily="Engravers MT" Background="{x:Null}" >
+                <Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="Red"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+
+            </Button>
         </Grid>
 
 
         <ListView x:Name="ProductListView" 
                   d:ItemsSource="{d:SampleData ItemCount=4}" 
                   Margin="265,75,265,112" 
-                  ItemsSource = "{Binding productForList}"
+                  ItemsSource="{Binding products }"
                   SelectionChanged="ProductListView_SelectionChanged"
-                  MouseDoubleClick="ProductListView_MouseDoubleClick">
+                  MouseDoubleClick="ProductListView_MouseDoubleClick"
+           
+                  >
             <ListView.View>
                 <GridView>
                     <GridViewColumn

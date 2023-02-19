@@ -2,7 +2,7 @@
 namespace BO;
 
 //The fields of the logical entity - order tracking
-public class OerderTracking
+public class OrderTracking
 {
     public int Id { get; set; } 
     public OrderStatus? Status { get; set; }

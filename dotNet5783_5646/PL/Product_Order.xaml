@@ -5,13 +5,47 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
-        Title="Product_Order" Height="450" Width="800">
+        Title="Product_Order" Height="450" Width="800" Icon="/life.png">
     <Grid>
         <Grid.Background>
             <ImageBrush ImageSource="/backround2.jpg"/>
         </Grid.Background>
-        <Button x:Name="ToProduct" Content="Product" HorizontalAlignment="Left" Margin="547,313,0,0" VerticalAlignment="Top" Click="ToProduct_Click"/>
-        <Button x:Name="Order" Content="Order" HorizontalAlignment="Left" Margin="293,316,0,0" VerticalAlignment="Top" Click="Order_Click"/>
+        <Button x:Name="ToProduct" Content="Product" HorizontalAlignment="Left" Margin="468,307,0,0" VerticalAlignment="Top" Click="ToProduct_Click">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="Red"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+        </Button>
+        <Button x:Name="Order" Content="Order" HorizontalAlignment="Left" Margin="363,307,0,0" VerticalAlignment="Top" Click="Order_Click" RenderTransformOrigin="0.852,0.177" Width="40">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="Red"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+        </Button>
+
+
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="49*"/>
+                <ColumnDefinition Width="751*"/>
+            </Grid.ColumnDefinitions>
+            <Image Source="C:\Users\User\Downloads\life.png" Margin="21,276,653,94" Grid.Column="1" />
+        </Grid>
+
+
 
     </Grid>
 </Window>

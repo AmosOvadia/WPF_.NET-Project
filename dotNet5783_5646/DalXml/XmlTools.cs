@@ -5,9 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using DO;
 
 namespace Dal;
-using DO;
+
+/// <summary>
+/// xml tools
+/// </summary>
 static class XmlTools
 {
     static string? s_dir = Directory.GetParent(System.IO.Directory.GetCurrentDirectory())?.FullName + @"\xml\";
@@ -123,7 +127,7 @@ static class XmlTools
     {
         return new DO.Product
         {
-            Id = int.Parse(xElem.Element("ID")!.Value),
+            Id = int.Parse(xElem.Element("Id")!.Value),
             Name = xElem.Element("Name")!.Value,
             Category = (Enums.ProdactCategory?)Enum.Parse(typeof(DO.Enums.ProdactCategory), xElem.Element("Category")!.Value),
             InStock = int.Parse(xElem.Element("InStock")!.Value),

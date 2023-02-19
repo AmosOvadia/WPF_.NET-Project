@@ -21,6 +21,7 @@ namespace PL
     /// </summary>
     public partial class AddNewProduct : Window
     {
+        private Action<int> Action;
         BlApi.IBl? bl = BlApi.Factory.Get();
 
         public BO.Product? product
@@ -35,11 +36,12 @@ namespace PL
         BO.Cart dataCart = new BO.Cart();
 
         int? ID = 0;
-        public AddNewProduct(int? id, bool b)
+        public AddNewProduct(int? id, bool b, Action<int> action)
         {
             ID = id;
             product = new();
             InitializeComponent();
+            this.Action = action;
             CategoryNewProduct.ItemsSource = Enum.GetValues(typeof(BO.Enums.ProdactCategory));
             if (b == false)
             {
@@ -72,39 +74,43 @@ namespace PL
             {
                 bl?.Product.Add(product);
                 check = true;
+                Action?.Invoke(product.Id);
             }
+
+           
+           
+
             catch (BO.TheIDAlreadyExistsInTheDatabase ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (BO.TheVariableIsLessThanTheNumberZero ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message,"ERROR",MessageBoxButton.OK,MessageBoxImage.Error);
             }
             catch (BO.OutOfStock ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (BO.InputError ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (BO.VariableIsNull ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             if (check == true)
             {
                 Add.Visibility = Visibility.Hidden;
+                Close();
             }
         }
 
 
         private void BackToMain_Click(object sender, RoutedEventArgs e)
         {
-            // new PL.Product..Show();
-
-            new ProductForListWindow().Show();
+           
             Close();
         }
 
@@ -125,29 +131,30 @@ namespace PL
             }
             catch (BO.TheIDAlreadyExistsInTheDatabase ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (BO.TheVariableIsLessThanTheNumberZero ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (BO.OutOfStock ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (BO.InputError ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (BO.VariableIsNull ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             if (check == true)
             {
                 UpdateProduct.Visibility = Visibility.Hidden;
+                Close();
             }
-
+            Action?.Invoke(product.Id);
 
         }
 

@@ -20,6 +20,8 @@ namespace PL
     /// </summary>
     public partial class OrderDetails : Window
     {
+        private Action<int> Action;
+
         BlApi.IBl? bl = BlApi.Factory.Get();
         public BO.Order? orderBinding
         {
@@ -40,11 +42,12 @@ namespace PL
 
 
 
-        public OrderDetails(BO.OrderForList order2, BO.OerderTracking order1,int i)
+        public OrderDetails(BO.OrderForList order2, BO.OrderTracking order1,int i, Action<int> action)
         {
             orderBinding = new();
             OrderItems = new();
             InitializeComponent();
+            this.Action = action;
             if (i == 0)
             {
                 UpdateDelivery.Visibility = Visibility.Hidden;
@@ -84,7 +87,8 @@ namespace PL
             }
             //    ListUpdateOrder.ItemsSource
             //DataContext = MyOrder?.Items;
-            OrderItems = MyOrder.Items!;
+            //   OrderItems = MyOrder.Items!;
+
         }
 
 
@@ -110,18 +114,20 @@ namespace PL
             catch (VariableIsNull ex)
             {
 
-                MessageBox.Show("❌  " + ex.Message);
+                MessageBox.Show(ex.Message, "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (BO.InputError ex)
             {
-                MessageBox.Show("❌  " + ex.Message);
+                MessageBox.Show(ex.Message, "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             if (check == true)
             {
                 UpdateDelivery.Visibility = Visibility.Hidden;
-                new OrderForList().Show();
+                // new OrderForList().Show();
+
                 Close();
             }
+            Action?.Invoke(orderBinding.Id);
 
         }
 
@@ -153,7 +159,7 @@ namespace PL
 
         private void GoBackToListOrder_Click(object sender, RoutedEventArgs e)
         {
-            new OrderForList().Show();
+           // new OrderForList().Show();
             Close();
         }
 
@@ -164,7 +170,7 @@ namespace PL
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            new OrderForList().Show();
+           // new OrderForList().Show();
             Close();
         }
 
@@ -185,18 +191,24 @@ namespace PL
             catch (VariableIsNull ex)
             {
 
-                MessageBox.Show("❌  " + ex.Message);
+                MessageBox.Show(ex.Message, "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (BO.InputError ex)
             {
-                MessageBox.Show("❌  " + ex.Message);
+                MessageBox.Show(ex.Message, "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             if (check == true)
             {
                 UpdateShip.Visibility = Visibility.Hidden;
-                new OrderForList().Show();
+               // new OrderForList().Show();
                 Close();
             }
+            Action?.Invoke(orderBinding.Id);
+
         }
+
+
+
+
     }
 }

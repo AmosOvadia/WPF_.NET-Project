@@ -2,6 +2,8 @@
 using DO;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,37 +24,93 @@ namespace PL
     public partial class CartList : Window
     {
         BlApi.IBl? bl = BlApi.Factory.Get();
-        
 
-        public List<BO.OrderItem?> cartItems
+        protected void OnPropertyChanged(string propertyName)
         {
-            get { return (List<BO.OrderItem?>)GetValue(cartProperty); }
-            set { SetValue(cartProperty, value); }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        public static readonly DependencyProperty cartProperty = DependencyProperty.Register(
-        "cartItems", typeof(List<BO.OrderItem?>), typeof(CartList), new PropertyMetadata(default(List<BO.OrderItem?>)));
 
-        public BO.Cart? cart
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        //private ObservableCollection<BO.OrderItem> _cartItems;
+        //public ObservableCollection<BO.OrderItem> cartItems
+        //{
+        //    get { return _cartItems; }
+        //    set
+        //    {
+        //        _cartItems = value;
+        //        OnPropertyChanged(nameof(cartItems));
+        //    }
+        //}
+
+        private BO.Cart _cart;
+        public BO.Cart cart
         {
-            get { return (BO.Cart?)GetValue(cartPropertyTotal); }
-            set { SetValue(cartPropertyTotal, value); }
+            get { return _cart; }
+            set
+            {
+                _cart = value;
+                OnPropertyChanged(nameof(cart));
+            }
         }
-        public static readonly DependencyProperty cartPropertyTotal = DependencyProperty.Register(
-        "cart", typeof(BO.Cart), typeof(CartList), new PropertyMetadata(default(BO.Cart?)));
-
 
 
 
         BO.Cart dataCart = new BO.Cart();
-        public CartList(BO.Cart? cart1)
+
+
+        public ObservableCollection<BO.OrderItem?> cartItems
+        {
+            get { return (ObservableCollection<BO.OrderItem?>)GetValue(cartItemsProperty); }
+            set { SetValue(cartItemsProperty, value); }
+        }
+
+      
+        public static readonly DependencyProperty cartItemsProperty = DependencyProperty.Register(
+        "cartItemsProperty", typeof(ObservableCollection<BO.OrderItem?>), typeof(CartList), new PropertyMetadata(default(ObservableCollection<BO.OrderItem?>)));
+
+
+
+        public double PriceP
+        {
+            get { return (double)GetValue(priceProperty); }
+            set { SetValue(priceProperty, value); }
+        }
+        public static readonly DependencyProperty priceProperty = DependencyProperty.Register(
+        "PriceP", typeof(double), typeof(CartList), new PropertyMetadata(default(double)));
+
+
+
+        //public List<BO.OrderItem?> cartItems
+        //{
+        //    get { return (List<BO.OrderItem?>)GetValue(cartProperty); }
+        //    set { SetValue(cartProperty, value); }
+        //}
+        //public static readonly DependencyProperty cartProperty = DependencyProperty.Register(
+        //"cartItems", typeof(List<BO.OrderItem?>), typeof(CartList), new PropertyMetadata(default(List<BO.OrderItem?>)));
+
+        //public BO.Cart? cart
+        //{
+        //    get { return (BO.Cart?)GetValue(cartPropertyTotal); }
+        //    set { SetValue(cartPropertyTotal, value); }
+        //}
+        //public static readonly DependencyProperty cartPropertyTotal = DependencyProperty.Register(
+        //"cart", typeof(BO.Cart), typeof(CartList), new PropertyMetadata(default(BO.Cart?)));
+
+
+
+
+        //  BO.Cart dataCart = new BO.Cart();
+        public CartList(BO.Cart? cart1, Action<int> action)
         {
             cart = new();
             cartItems = new();
+            cartItems = new ObservableCollection<BO.OrderItem>(cart1.Items!.ToList())!; 
+            PriceP = new();
             InitializeComponent();
-            cartItems = cart1.Items!;
 
-            cart = cart1; 
-
+            cart = cart1;
+            PriceP = cart1.TotalPrice;
             dataCart = cart1;
         }
 
@@ -62,7 +120,7 @@ namespace PL
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            e.Source = cartItems;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -82,22 +140,33 @@ namespace PL
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            MessageBox.Show("Succeded");
+            MessageBox.Show("Succeded","",MessageBoxButton.OK,MessageBoxImage.Information);
             Close();
         }
+
+
+
         private void UpdateAmount_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             BO.OrderItem? p = (BO.OrderItem?)CartListView.SelectedItem;
            // OrderItem? p = (OrderItem?)CartListView.SelectedItem;
-            new AmountUpdate(dataCart,p.ProductId).Show();
-            Close();
+            new AmountUpdate(dataCart,p.ProductId, UpdateProduct).Show();
+            //Close();
         }
 
 
-
+        private void UpdateProduct(Cart c,int id)
+        {
+            var x = CartListView.SelectedIndex;
+           // var y = c.Items.FirstOrDefault(x => x?.ProductId == id);
+          // int x = c.Items.IndexOf(y);
+            cartItems[x] = c.Items[x]!;
+            PriceP = c.TotalPrice;
+           // cartItems = new ObservableCollection<BO.OrderItem>(c.Items.ToList()!);
+        }
 
 
         //private void TextBox_KeyDown(object sender, KeyEventArgs e)

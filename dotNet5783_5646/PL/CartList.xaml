@@ -16,10 +16,10 @@
             <ColumnDefinition Width="291*"/>
         </Grid.ColumnDefinitions>
 
-        <ListView x:Name="CartListView" d:ItemsSource="{d:SampleData ItemCount=5}" ItemsSource="{Binding cartItems}"  Margin="21,10,102,212" SelectionChanged="ListView_SelectionChanged"
-                  
-                  
-                              MouseDoubleClick="UpdateAmount_MouseDoubleClick"
+        <ListView x:Name="CartListView" d:ItemsSource="{d:SampleData ItemCount=5}" 
+                  ItemsSource="{Binding cartItems}"  
+                  Margin="21,10,102,212" SelectionChanged="ListView_SelectionChanged"
+                  MouseDoubleClick="UpdateAmount_MouseDoubleClick"
 
                   >
 
@@ -27,22 +27,22 @@
             <ListView.View>
                 <GridView>
 
-                    <GridViewColumn  DisplayMemberBinding = "{Binding Path = ProductId }"
+                    <GridViewColumn  DisplayMemberBinding = "{Binding ProductId}"
                     Header = "ID"
                     Width = "100" />
 
                     <GridViewColumn
-                    DisplayMemberBinding = "{Binding Path = Name}"
+                    DisplayMemberBinding = "{Binding Name}"
                     Header = "Name"
                     Width = "140" />
 
                     <GridViewColumn
-                    DisplayMemberBinding = "{Binding Path = Price}"
+                    DisplayMemberBinding = "{Binding  Price}"
                     Header = "Price"
                     Width = "60" />
 
                     <GridViewColumn
-                    DisplayMemberBinding = "{Binding Path = Amount}"
+                    DisplayMemberBinding = "{Binding  Amount}"
                     Header = "Amount"
                     Width = "70" />
 
@@ -72,9 +72,13 @@
         <TextBox  Name ="Email" HorizontalAlignment="Left" Margin="115,128,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
 
         <Label Content="Total Price" HorizontalAlignment="Left" VerticalAlignment="Top" Height="37" Width="158" Margin="466,151,0,0" RenderTransformOrigin="0.462,-2.636" FontFamily="Verdana" FontSize="16" FontWeight="Bold" Foreground="#FFE4E4EC" Grid.ColumnSpan="2"/>
-        <TextBox Name="TotalPrice"  HorizontalAlignment="Left" Margin="115,160,0,0" TextWrapping="Wrap" Text="{Binding cart.TotalPrice}" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
+        <TextBox Name="TotalPrice"  HorizontalAlignment="Left" Margin="115,160,0,0" TextWrapping="Wrap" Text="{Binding PriceP}" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
 
         <Button x:Name="Confirmation" Content="Confirmation" HorizontalAlignment="Left" Margin="101,197,0,0" VerticalAlignment="Top" Height="36" Width="167" FontSize="18" Click="Button_Click_1" RenderTransformOrigin="0.485,-0.385" Grid.Column="1"/>
 
+        
+        
+        
+        
     </Grid>
 </Window>

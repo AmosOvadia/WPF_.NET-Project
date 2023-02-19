@@ -123,10 +123,10 @@ internal class BoCart : BlApi.ICart
             throw new BO.InputError("Input error");
         }
 
-        if (cart.Items!.Any(item => Do_Products.Any(product => product?.Id == item?.ProductId && item?.Amount > product?.InStock)))
-        {
-            throw new BO.OutOfStock("Out of stock");
-        }
+        //if (cart.Items!.Any(item => Do_Products.Any(  product => product?.Id == item?.ProductId && item?.Amount > product?.InStock)))
+        //{
+        //    throw new BO.OutOfStock("Out of stock");
+        //}
 
         var order = new DO.Order
         {

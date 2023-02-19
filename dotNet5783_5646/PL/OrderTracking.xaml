@@ -5,15 +5,37 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL"
         mc:Ignorable="d"
-      Title="OrderTracking" Height="450" Width="800">
+      Title="OrderTracking" Height="450" Width="800" Icon="/income.png">
     <Grid>
         <Grid.Background>
             <ImageBrush ImageSource="/backround2.jpg"/>
         </Grid.Background>
 
-        <Button Content="Home" HorizontalAlignment="Left" Margin="10,360,0,0" VerticalAlignment="Top" Height="45" Width="96" FontSize="18" Click="Button_Click"/>
+        <Button Content="Home" HorizontalAlignment="Left" Margin="10,360,0,0" VerticalAlignment="Top" Height="45" Width="96" FontSize="18" Click="Button_Click">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="Red"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+        </Button>
         <TextBlock Name="OrderTackingText" HorizontalAlignment="Left" Margin="236,75,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="231" Width="302" FontSize="22" Foreground="#FFEFE1E1" FontWeight="Bold" />
-        <Button Content="To See Order" HorizontalAlignment="Left" Margin="296,330,0,0" VerticalAlignment="Top" Width="182" Height="45" FontSize="18" Click="Button_Click_1"/>
+        <Button Content="To See Order" HorizontalAlignment="Left" Margin="296,330,0,0" VerticalAlignment="Top" Width="182" Height="45" FontSize="18" Click="Button_Click_1">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="Red"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+
+        </Button>
 
     </Grid>
 </Window>

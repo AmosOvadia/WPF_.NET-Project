@@ -1,6 +1,8 @@
 ﻿using BO;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,14 +25,38 @@ namespace PL
         BlApi.IBl? bl = BlApi.Factory.Get();
         BO.Cart cart = new Cart();
 
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
-        public List<BO.ProductItem?> productItem = new List<ProductItem?>();
+        public event PropertyChangedEventHandler PropertyChanged;
+
+
+        private ObservableCollection<BO.ProductItem?> _productItem;
+        public ObservableCollection<BO.ProductItem?> productItem
+        {
+            get { return _productItem; }
+            set
+            {
+                _productItem = value;
+                OnPropertyChanged(nameof(productItem));
+            }
+        }
+
+
+
+
+
+
+
+       // public List<BO.ProductItem?> productItem = new List<ProductItem?>();
 
         public NewOrder()
         {
            
             InitializeComponent();
-            productItem = bl?.Product.GetProductItems().ToList()!;
+            productItem = new ObservableCollection<BO.ProductItem>(bl?.Product.GetProductItems()!)!;
 
             //  DataContext = bl?.Product.GetProductItems();
             //Category.ItemsSource = Enum.GetValues(typeof(BO.Enums.ProdactCategory)); //Get the category types from the logical layer
@@ -69,7 +95,8 @@ namespace PL
         private void NewOrderListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var ww = (BO.ProductItem)NewOrderListView.SelectedItem;
-            var productWindow = new AddNewProduct(ww.Id, true);
+            Action<int>? action = null;
+            var productWindow = new AddNewProduct(ww.Id, true,action);
             productWindow.ShowDialog();
             //// BO.Order order = bl.Order.GetOrder(ww.Id);
             //{
@@ -81,7 +108,11 @@ namespace PL
 
         private void ToCartList_Click(object sender, RoutedEventArgs e)
         {
-            new CartList(cart).Show();
+            Action<int>? action = null;
+            if(cart.Items != null)
+            new CartList(cart, action).Show();
+            else MessageBox.Show("The cart is empty", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+
             // Close();
         }
 

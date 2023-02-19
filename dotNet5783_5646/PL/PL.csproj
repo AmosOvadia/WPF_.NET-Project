@@ -13,18 +13,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="5e3baa24f096ce3e10a28d1c7ee541af.jpg" />
     <None Remove="backround.jpg" />
     <None Remove="backround2.jpg" />
+    <None Remove="income.png" />
+    <None Remove="life.png" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BL\BL.csproj" />
     <ProjectReference Include="..\DalXml\DalXml.csproj" />
+    <ProjectReference Include="..\Simulator\Simulator.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="5e3baa24f096ce3e10a28d1c7ee541af.jpg" />
     <Resource Include="backround.jpg" />
     <Resource Include="backround2.jpg" />
+    <Resource Include="income.png" />
+    <Resource Include="life.png" />
   </ItemGroup>
 
 </Project>
