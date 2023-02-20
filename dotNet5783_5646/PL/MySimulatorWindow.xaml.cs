@@ -20,7 +20,7 @@ public partial class MySimulatorWindow : Window
     // MyTrackerProperty represents the current order being tracked, of type BO.OrderTracking.
     public static readonly DependencyProperty MyTrackerProperty =
         DependencyProperty.Register("OrderCurrent", typeof(BO.OrderTracking), typeof(MySimulatorWindow));
-    public BO.OrderTracking OrderCurrent
+    public BO.OrderTracking OrderCurrent // the current order
     {
         get { return (BO.OrderTracking)GetValue(MyTrackerProperty); }
         set { SetValue(MyTrackerProperty, value); }
@@ -83,7 +83,7 @@ public partial class MySimulatorWindow : Window
 
     BlApi.IBl? bl = BlApi.Factory.Get();
     //initialization of the time and the bar progress and the timer to seconds
-    public MySimulatorWindow()
+    public MySimulatorWindow() //ctor initializes all thats needed
     {
         BarProgress = 0;
         Time = "00:00:00";
@@ -103,7 +103,7 @@ public partial class MySimulatorWindow : Window
             Simulator.StopSimulation();
             timer.Stop();
             estimatedTime = 0;
-            MessageBox.Show("The simulation finished!!!");
+            MessageBox.Show("The simulation has finished!!!");
         }
         else
         {
