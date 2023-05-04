@@ -1,17 +1,8 @@
 
-# dotNet5783_5646
-
-שימוש ב-TryParse בתוכניות בדיקה BlTest/DalTest (רכזים - 1 נק')<br/>
-
-
-שימוש בטריגרים (רכזים - 1 נק' כל סוג של טריגר) 
-טריגר נתונים  <br/>
-שימוש במשאב כללי של Style עבור עיצובי פקדים (רכזים –-- 1 נק') <br/>
-גרפיקה (shape) (רכזים - 1 נק') <br/>
-אייקון (icon) בכותרת החלון ושורת המשימות (סטודנטים) אושר - 1 נק'<br/>
-עדכון כל שניה על התקדמות מעבר ההזמנה ממצב למצב בעזרת progress bar (שכלל אינטראקציה עם סימולטור) (עד 3 נק')<br/>
- שימוש ב-async/await ב-WPF - ניתן להשתמש במקום פועל רקע (רכזים - עד 2 נק')<br/>
- שימוש ב-Dispatcher (מותנה בשימוש מלא בפועל רקע ללא Dispatcher לפחות במקום אחד) (רכזים - עד 1 נק')<br/>
- מלא ב-binding (רכזים 3')<br/>
-
- 
+- Developed a clothing store program using modern .Net development infrastructures and C# language
+- Implemented design patterns such as Observer, Design by Contract, Factory Method, and Singleton
+- Demonstrated familiarity with LINQ data collections, queries with deferred execution, and data binding methods
+- Built a graphical user interface (GUI) using the WPF library
+- Followed a multitier architecture and demonstrated knowledge of the basic architecture of a distributed application
+- Worked with DOM, XML files, and in a multi-process environment
+- Demonstrated self-learning ability, the ability to deal with challenges, creative thinking, and experience in carrying out a complete project from start to finish.
