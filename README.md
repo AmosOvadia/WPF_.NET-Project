@@ -8,5 +8,7 @@
 - Demonstrated self-learning ability, the ability to deal with challenges, creative thinking, and experience in carrying out a complete project from start to finish.
 
 
-https://user-images.githubusercontent.com/116605746/236280719-ee787c13-e20f-4b7d-b9a5-83f6f5e6fea0.mp4
+
+
+https://user-images.githubusercontent.com/116605746/236282256-c0ebb5e1-5817-43ea-9299-9cc3fa82dae5.mp4
 
